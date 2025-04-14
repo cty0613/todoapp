@@ -5,19 +5,19 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class Widget;
+class MainWindow;
 }
 QT_END_NAMESPACE
 
-class Widget : public QWidget
+class MainWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
-    ~Widget();
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
 private:
-    Ui::Widget *ui;
+    Ui::MainWindow *ui;
 };
 #endif // WIDGET_H

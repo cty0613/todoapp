@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(todoapp LANGUAGES CXX)
 
+include_directories("cmake-build-debug/${PROJECT_NAME}_autogen/include")
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 
 qt_standard_project_setup()
