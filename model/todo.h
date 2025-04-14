@@ -14,6 +14,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+
 class ToDo : public QObject
 {
     Q_OBJECT
@@ -36,7 +37,8 @@ private:
 public:
     explicit ToDo(QObject *parent = nullptr);
     ToDo(int id);
-    ToDo(QString title, QDateTime date, QString detail);
+    ToDo(QString title,
+         QString detail = "", QDateTime date = QDateTime::currentDateTime());
 
     /*setter and getter*/
     int Id() const;
@@ -64,19 +66,24 @@ public:
 private:
     QJsonObject toDoJSONObj();
     int duplicated(QJsonArray& arr, int id);
+    void overwriteToDoJSONArray(QJsonArray& arr);
+    void overwriteToDoJSONArray(QJsonArray& arr, int pos, QJsonObject& obj); //-1 for append
 public:
     /*create(insert)*/
     void insertToDoJSON();
 
     /*read, search*/
     QJsonArray readToDoJSON(); //default(all array)
-    QJsonArray readToDoJSON(QString title, QDateTime from, QDateTime to);//(title, period)
-
+    QJsonArray readToDoJSON(QDateTime to, QDateTime from, QString title);
     /*update*/
     void updateToDoJSON();
 
     /*delete*/
+private:
+    void deleteToDoJSON(QJsonArray& array, int id);
+public:
     void deleteToDoJSON(QString title);
+    void deleteToDoJSON(QDateTime to, QDateTime from, QString title);
 
 signals:
     //later connect

@@ -1,21 +1,5 @@
 #include "todo.h"
 
-/*QJsonArray -> QJsonObject*/
-
-/*literally for debug - comment it when release mode*/
-#define DEBUG_MODE
-#ifdef DEBUG_MODE
-#include <QDebug>
-void Debug(QString str){
-    qDebug() << str;
-}
-/*
-#ifdef DEBUG_MODE
-Debug(str)
-#endif
-*/
-#endif
-
 int ToDo::defaultId = 0;
 
 ToDo::ToDo(QObject *parent)
@@ -28,8 +12,7 @@ ToDo::ToDo(int id) : id{id}{
     //id를 이용하여 맴버 채우기
 }
 
-ToDo::ToDo(QString title,
-           QDateTime date = QDateTime::currentDateTime(), QString detail = "")
+ToDo::ToDo(QString title, QString detail, QDateTime date)
     : title{title}, date{date}, detail{detail}
 {
     if(title.length() == 0)
@@ -64,7 +47,7 @@ bool ToDo::Complete() const
 }
 void ToDo::toggleComplete()
 {
-    complete = ~complete;
+    complete = !complete;
 }
 
 QDateTime ToDo::Reminder() const
@@ -112,7 +95,7 @@ QJsonObject ToDo::toDoJSONObj(){
     obj["title"] = title;
     obj["complete"] = complete;
     obj["iconPath"] = iconPath;
-    obj["date"] = date.toString("yyyy:MM:dd:HH:mm");
+    obj["date"] = date.toString("yyyy:MM:dd");
     obj["reminder"] = reminder.toString("yyyy:MM:dd:HH:mm");
     obj["detail"] = detail;
     obj["parentTask"] = parentTask;
@@ -125,62 +108,196 @@ QJsonObject ToDo::toDoJSONObj(){
 
     return obj;
 }
+int ToDo::duplicated(QJsonArray& arr, int id){
+    int index = -1;
+
+    for(int i = 0; i < arr.size(); i++){
+        QJsonValue value = arr.at(i);
+        if(!value.isObject()) continue;
+
+        QJsonObject obj = value.toObject();
+        if(obj.value("id").toInt() == id)
+            return i;
+    }
+
+    return -1;
+}
+void ToDo::overwriteToDoJSONArray(QJsonArray& arr){
+    QJsonDocument newDoc(arr);
+
+    QFile file(JSONDATAPATH);
+    if (!file.open(QIODevice::WriteOnly)) {
+        qWarning() << "파일 열기 실패(쓰기):" << file.errorString();
+        return;
+    }
+
+    file.write(newDoc.toJson());
+    file.close();
+}
+void ToDo::overwriteToDoJSONArray(QJsonArray& arr, int pos, QJsonObject& obj){
+    if(pos > -1)
+        arr[pos] = obj;
+    else
+        arr.append(obj);
+
+    overwriteToDoJSONArray(arr);
+}
 
 /*JSON File Insert*/
 void ToDo::insertToDoJSON()
 {
-    /*
-     * Open JSON File
-     * Add new todo list - json form
-     * write on the json file
-     * close json file
-     * duplicated 함수 만들 것, 파일을 읽어들이는 함수는 별도로 만들 것(완), 갱신하는 것도 별도로 만들 것
-     */
+    QJsonArray array = readToDoJSON();
 
-    QJsonArray todolist = readToDoJSON();
+    int index = duplicated(array, id);
+
+    QJsonObject newObj = toDoJSONObj();
+
+    overwriteToDoJSONArray(array, index, newObj);
 }
 
 /*JSON File Read*/
 QJsonArray ToDo::readToDoJSON(){
+
     QFile file(JSONDATAPATH);
-    if(!file.open(QIODevice::ReadWrite | QIODevice::Append)){
-        qWarning() << "파일이 존재하지 않습니다:" << file.errorString();
-        return QJsonArray();
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "파일을 열 수 없습니다:" << file.errorString();
+        return QJsonArray(); // 빈 배열 반환
     }
+
     QByteArray fileData = file.readAll();
     file.close();
 
-    QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(fileData, &parseError);
-    if (parseError.error != QJsonParseError::NoError) {
-        qWarning() << "JSON 파싱 오류:" << parseError.errorString();
-        return QJsonArray();
-    }
-    if (!doc.isObject()) {
-        qWarning() << "JSON 최상위 객체가 Object가 아닙니다.";
-        return QJsonArray();
-    }
+    QJsonDocument doc = QJsonDocument::fromJson(fileData);
+
+    //qDebug() << doc.toJson();
 
     return doc.array();
 }
 
-QJsonArray ToDo::readToDoJSON(QString title, QDateTime from, QDateTime to){
-    return QJsonArray();
+QJsonArray ToDo::readToDoJSON(QDateTime to, QDateTime from, QString title = ""){
+
+    QJsonArray wholeArray = readToDoJSON();
+    QJsonArray wantedArray;
+
+    for(int i = 0; i < wholeArray.size(); i++){
+        QJsonValue value = wholeArray.at(i);
+        if(!value.isObject()) continue;
+
+        QJsonObject obj = value.toObject();
+        if(to.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) <= 0 &&
+            from.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) >= 0
+            ){
+            if(title.length() > 0){
+                if(obj.value("title").toString() == title){
+                    wantedArray.append(obj);
+
+                    qDebug() << "1";
+                    QJsonParseError parseError;
+                    QJsonDocument doc(wantedArray);
+                    //qDebug() << QString::fromUtf8(doc.toJson());
+                }
+            }
+            else{
+                qDebug() << "2";
+
+                wantedArray.append(obj);
+
+                QJsonParseError parseError;
+                QJsonDocument doc(wantedArray);
+                //qDebug() << QString::fromUtf8(doc.toJson());
+            }
+        }
+    }
+
+    //QJsonParseError parseError;
+    //QJsonDocument doc(wantedArray);
+    //qDebug() << QString::fromUtf8(doc.toJson());
+
+    return wantedArray;
 }
 
 /*JSON File Update*/
 void ToDo::updateToDoJSON()
 {
-    /*
-     * Open JSON File
-     * Get JSONArray Object
-     * Find JSONObj using id
-     */
+    QJsonArray array = readToDoJSON();
+
+    int index = duplicated(array, id);
+
+    QJsonObject newObj = toDoJSONObj();
+    overwriteToDoJSONArray(array, index, newObj);
 }
 
 /*JSON File Delete*/
+void ToDo::deleteToDoJSON(QJsonArray& array, int id){
+
+    for (int i = array.size() - 1; i >= 0; --i) {
+        QJsonValue val = array.at(i);
+        if (val.isObject()) {
+            QJsonObject obj = val.toObject();
+            if (obj.contains("id") && obj.value("id").toInt() == id) {
+
+                //subtask 삭제
+                if(obj.contains("subTasks")){
+                    QJsonArray subArr = obj.value("subTasks").toArray();
+                    if(!subArr.isEmpty()){
+                        for(int j = 0; j < subArr.size(); j++){
+                            QJsonValue subval = subArr.at(i);
+                            if(subval.isObject()){
+                                QJsonObject subobj = subval.toObject();
+                                deleteToDoJSON(array, subobj.value("id").toInt());
+                            }
+                        }
+                    }
+                }
+
+                array.removeAt(i);
+            }
+        }
+    }
+}
+
 void ToDo::deleteToDoJSON(QString title)
 {
+    QJsonArray array = readToDoJSON();
 
+    for (int i = array.size() - 1; i >= 0; --i) {
+        QJsonValue val = array.at(i);
+        if (val.isObject()) {
+            QJsonObject obj = val.toObject();
+            if (obj.contains("title") && obj.value("title") == "title") {
+                deleteToDoJSON(array, obj.value("id").toInt());
+            }
+        }
+    }
+
+    overwriteToDoJSONArray(array);
+}
+
+void ToDo::deleteToDoJSON(QDateTime to, QDateTime from, QString title = "")
+{
+    QJsonArray array = readToDoJSON();
+
+    for (int i = array.size() - 1; i >= 0; --i) {
+        QJsonValue val = array.at(i);
+        if (val.isObject()) {
+
+            QJsonObject obj = val.toObject();
+
+            if(to.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) <= 0 &&
+                from.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) >= 0
+                ){
+                if(title.length() > 0){
+                    if(obj.value("title") == title){
+                        deleteToDoJSON(array, obj.value("id").toInt());
+                    }
+                }
+                else{
+                    deleteToDoJSON(array, obj.value("id").toInt());
+                }
+            }
+        }
+    }
+
+    overwriteToDoJSONArray(array);
 }
 
