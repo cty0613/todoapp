@@ -45,6 +45,15 @@ void ToDo::setTitle(const QString &newTitle)
     title = newTitle;
 }
 
+QDateTime ToDo::Date() const
+{
+    return date;
+}
+
+void ToDo::setDate(const QDateTime &newDate)
+{
+    date = newDate;
+}
 
 bool ToDo::Complete() const
 {
@@ -107,7 +116,7 @@ void ToDo::setDataUsingObj(QJsonObject& obj){
     complete = obj.value("complete").toBool();
     iconPath = obj.value("iconPath").toString();
     date = QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd");
-    reminder = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:HH:mm");
+    reminder = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:hh:mm");
     reminded = obj.value("reminded").toBool();
     detail = obj.value("detail").toString();
     parentTask = obj.value("parentTask").toInt();
@@ -133,7 +142,7 @@ QJsonObject ToDo::toDoJSONObj(){
     obj["complete"] = complete;
     obj["iconPath"] = iconPath;
     obj["date"] = date.toString("yyyy:MM:dd");
-    obj["reminder"] = reminder.toString("yyyy:MM:dd:HH:mm");
+    obj["reminder"] = reminder.toString("yyyy:MM:dd:hh:mm");
     obj["reminded"] = reminded;
     obj["detail"] = detail;
     obj["parentTask"] = parentTask;
@@ -212,86 +221,66 @@ QJsonArray ToDo::readToDoJSON(){
     return doc.array();
 }
 
-QJsonArray ToDo::readToDoJSON(QDateTime to, QDateTime from, QString title = ""){
+QJsonArray ToDo::readToDoJSON(QDateTime from, QDateTime to, QString title){
 
     QJsonArray wholeArray = readToDoJSON();
     QJsonArray wantedArray;
 
-    for(int i = 0; i < wholeArray.size(); i++){
-        QJsonValue value = wholeArray.at(i);
-        if(!value.isObject()) continue;
+    // 시간 정규화
+    from.setTime(QTime(0, 0, 0));
+    to.setTime(QTime(23, 59, 59));
+
+    for (const QJsonValue &value : wholeArray) {
+        if (!value.isObject()) continue;
 
         QJsonObject obj = value.toObject();
-        if(to.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) <= 0 &&
-            from.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) >= 0
-            ){
-            if(title.length() > 0){
-                if(obj.value("title").toString() == title){
+        QString dateStr = obj.value("date").toString();
+        QDateTime dt = QDateTime::fromString(dateStr, "yyyy:MM:dd");
+
+        if (!dt.isValid()) {
+            qWarning() << "Invalid date format:" << dateStr;
+            continue;
+        }
+
+        if ((from <= dt) && (dt <= to)) {
+            if (!title.isEmpty()) {
+                if (obj.value("title").toString() == title)
                     wantedArray.append(obj);
-
-                    // qDebug() << "1";
-                    // QJsonParseError parseError;
-                    // QJsonDocument doc(wantedArray);
-                    //qDebug() << QString::fromUtf8(doc.toJson());
-                }
-            }
-            else{
-                // qDebug() << "2";
-
+            } else {
                 wantedArray.append(obj);
-
-                // QJsonParseError parseError;
-                // QJsonDocument doc(wantedArray);
-                //qDebug() << QString::fromUtf8(doc.toJson());
             }
         }
     }
-
-    //QJsonParseError parseError;
-    //QJsonDocument doc(wantedArray);
-    //qDebug() << QString::fromUtf8(doc.toJson());
 
     return wantedArray;
 }
 
-QJsonArray ToDo::readToDoJSONAlarm(QDateTime to, QDateTime from, QString title)
+QJsonArray ToDo::readToDoJSONAlarm(QDateTime from, QDateTime to, QString title)
 {
     QJsonArray wholeArray = readToDoJSON();
     QJsonArray wantedArray;
 
-    for(int i = 0; i < wholeArray.size(); i++){
-        QJsonValue value = wholeArray.at(i);
-        if(!value.isObject()) continue;
+    for (const QJsonValue &value : wholeArray) {
+        if (!value.isObject()) continue;
 
         QJsonObject obj = value.toObject();
-        if(to.daysTo(QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:HH:mm")) <= 0 &&
-            from.daysTo(QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:HH:mm")) >= 0
-            ){
-            if(title.length() > 0){
-                if(obj.value("title").toString() == title){
+        QString dateStr = obj.value("reminder").toString();
+        QDateTime dt = QDateTime::fromString(dateStr, "yyyy:MM:dd:hh:mm");
+
+        if (!dt.isValid()) {
+            qWarning() << "Invalid date format:" << dateStr;
+            continue;
+        }
+
+        if ((from <= dt) && (dt <= to)) {
+            if (!title.isEmpty()) {
+                if (obj.value("title").toString() == title)
                     wantedArray.append(obj);
-
-                    // qDebug() << "1";
-                    // QJsonParseError parseError;
-                    // QJsonDocument doc(wantedArray);
-                    //qDebug() << QString::fromUtf8(doc.toJson());
-                }
-            }
-            else{
-                // qDebug() << "2";
-
+            } else {
                 wantedArray.append(obj);
-
-                // QJsonParseError parseError;
-                // QJsonDocument doc(wantedArray);
-                //qDebug() << QString::fromUtf8(doc.toJson());
             }
         }
     }
-
-    //QJsonParseError parseError;
-    //QJsonDocument doc(wantedArray);
-    //qDebug() << QString::fromUtf8(doc.toJson());
 
     return wantedArray;
 }
@@ -353,7 +342,7 @@ void ToDo::deleteToDoJSON(QString title)
     overwriteToDoJSONArray(array);
 }
 
-void ToDo::deleteToDoJSON(QDateTime to, QDateTime from, QString title = "")
+void ToDo::deleteToDoJSON(QDateTime from, QDateTime to, QString title)
 {
     QJsonArray array = readToDoJSON();
 
@@ -362,11 +351,14 @@ void ToDo::deleteToDoJSON(QDateTime to, QDateTime from, QString title = "")
         if (val.isObject()) {
 
             QJsonObject obj = val.toObject();
+            QString dateStr = obj.value("date").toString();
+            QDateTime dt = QDateTime::fromString(dateStr, "yyyy:MM:dd");
 
-            if(to.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) <= 0 &&
-                from.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) >= 0 &&
-                (!obj.value("reminded").toBool())
-                ){
+            // 시간 정규화
+            from.setTime(QTime(0, 0, 0));
+            to.setTime(QTime(23, 59, 59));
+
+            if( (from <= dt) && (dt <= to) &&(!obj.value("reminded").toBool())){
                 if(title.length() > 0){
                     if(obj.value("title") == title){
                         deleteToDoJSON(array, obj.value("id").toInt());
