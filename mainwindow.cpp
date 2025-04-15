@@ -66,12 +66,33 @@ void MainWindow::chkTodo(const int &todoId){
     ToDo(targetTodo).updateToDoJSON();
 
     updateList(false);
+    updateDoneList(false);
 }
 
 void MainWindow::editTodo(const int &todoId){
     SubWindow* subw = new SubWindow();
     subw->show();
 
+}
+
+
+void MainWindow::deleteTodoDone(const int &todoId){
+    ToDo().deleteToDoJSON(todoId);
+    updateDoneList(false);
+}
+
+void MainWindow::chkTodoDone(const int &todoId){
+    QJsonObject targetTodo = ToDo().getTodoById(todoId);
+    targetTodo["complete"] = false;
+    ToDo(targetTodo).updateToDoJSON();
+
+    updateList(false);
+    updateDoneList(false);
+}
+
+void MainWindow::editTodoDone(const int &todoId){
+    SubWindow* subw = new SubWindow();
+    subw->show();
 }
 
 
@@ -115,6 +136,45 @@ void MainWindow::updateList(bool initLoad){
 
 }
 
+void MainWindow::updateDoneList(bool initLoad){
+    if(!initLoad){
+        // layout에 남아 있는 모든 항목을 순차적으로 제거
+        while (QLayoutItem* item = ui->doneListGroupLayout->takeAt(0)) {
+            // layout에서 위젯을 가져옴
+            QWidget* widget = item->widget();
+            if (widget) {
+                widget->setParent(nullptr);
+                delete widget;   // 위젯 삭제
+            }
+            delete item;  // 레이아웃도 삭제
+        }
+    }
+
+    disconnectWidgetsInDoneLayout();
+    QJsonArray rawArray = ToDo().readToDoJSON();
+    QJsonArray todoObjArray = sortJSONByDate(rawArray, 1);
+    qDebug() << todoObjArray.size();
+
+    // UI를 모두 비운다음
+    // JSON으로부터 읽어와서
+    // 어레이 루프 동안
+    // 각 오브젝트를 뽑고나서
+    // TodoWidget 생성
+
+    for (const QJsonValue &val : todoObjArray) {
+        QJsonObject obj = val.toObject();
+        if(obj["complete"].toBool()){
+            int _id = obj["id"].toInt();
+            QString _title = obj["title"].toString();
+            QString _iconPath = obj["iconPath"].toString();
+            TodoWidget* newTodoWidget = new TodoWidget(_id, _title, _iconPath, this);
+            ui->doneListGroupLayout->addWidget(newTodoWidget);
+        }
+    }
+
+    connectWidgetsInDoneLayout();
+}
+
 void MainWindow::connectWidgetsInLayout() {
     int count = ui->TodoListGroupLayout->count();  // layout에 들어있는 항목 수
     for (int i = 0; i < count; ++i) {
@@ -133,6 +193,29 @@ void MainWindow::connectWidgetsInLayout() {
 
                 connect(todo, &TodoWidget::editBtnClicked,
                          this, &MainWindow::editTodo);
+            }
+        }
+    }
+}
+
+void MainWindow::connectWidgetsInDoneLayout() {
+    int count = ui->doneListGroupLayout->count();  // layout에 들어있는 항목 수
+    for (int i = 0; i < count; ++i) {
+        QLayoutItem* item = ui->doneListGroupLayout->itemAt(i);  // i번째 항목
+        QWidget* widget = item->widget();       // 위젯 가져오기
+        if (widget) {
+            // 예: TodoWidget 클래스인지 확인하고 연결
+            TodoWidget* todo = qobject_cast<TodoWidget*>(widget);
+            if (todo) {
+                // 예시: todo 위젯의 특정 시그널에 connect
+                connect(todo, &TodoWidget::deleteBtnClicked,
+                        this, &MainWindow::deleteTodoDone);
+
+                connect(todo, &TodoWidget::chkBtnClicked,
+                        this, &MainWindow::chkTodoDone);
+
+                connect(todo, &TodoWidget::editBtnClicked,
+                        this, &MainWindow::editTodoDone);
             }
         }
     }
@@ -157,6 +240,29 @@ void MainWindow::disconnectWidgetsInLayout() {
 
                 disconnect(todo, &TodoWidget::editBtnClicked,
                          this, &MainWindow::editTodo);
+            }
+        }
+    }
+}
+
+void MainWindow::disconnectWidgetsInDoneLayout() {
+    int count = ui->doneListGroupLayout->count();  // layout에 들어있는 항목 수
+    for (int i = 0; i < count; ++i) {
+        QLayoutItem* item = ui->doneListGroupLayout->itemAt(i);  // i번째 항목
+        QWidget* widget = item->widget();       // 위젯 가져오기
+        if (widget) {
+            // 예: TodoWidget 클래스인지 확인하고 연결
+            TodoWidget* todo = qobject_cast<TodoWidget*>(widget);
+            if (todo) {
+                // 예시: todo 위젯의 특정 시그널에 connect
+                disconnect(todo, &TodoWidget::deleteBtnClicked,
+                           this, &MainWindow::deleteTodoDone);
+
+                disconnect(todo, &TodoWidget::chkBtnClicked,
+                           this, &MainWindow::chkTodoDone);
+
+                disconnect(todo, &TodoWidget::editBtnClicked,
+                           this, &MainWindow::editTodoDone);
             }
         }
     }

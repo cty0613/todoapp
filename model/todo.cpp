@@ -436,7 +436,22 @@ void ToDo::addSubTasksToToDoJSON(ToDo& todo){
     todo.insertToDoJSON();
 }
 
-bool compareJsonByDate(QJsonValue& a, QJsonValue& b){
+bool compareJsonByDate_0(QJsonValue& a, QJsonValue& b){
+
+    QJsonObject obja = a.toObject();
+    QString dateStra = obja.value("date").toString();
+    QDateTime dta = QDateTime::fromString(dateStra, "yyyy:MM:dd");
+    dta.setTime(QTime(0, 0, 0));
+
+    QJsonObject objb = b.toObject();
+    QString dateStrb = objb.value("date").toString();
+    QDateTime dtb = QDateTime::fromString(dateStrb, "yyyy:MM:dd");
+    dtb.setTime(QTime(0, 0, 0));
+
+    return dta < dtb;
+}
+
+bool compareJsonByDate_1(QJsonValue& a, QJsonValue& b){
 
     QJsonObject obja = a.toObject();
     QString dateStra = obja.value("date").toString();
@@ -451,7 +466,7 @@ bool compareJsonByDate(QJsonValue& a, QJsonValue& b){
     return dta > dtb;
 }
 
-QJsonArray sortJSONByDate(QJsonArray& array){
+QJsonArray sortJSONByDate(QJsonArray& array, int mode){
     //최신순 정렬
     QVector<QJsonValue> values;
 
@@ -461,7 +476,10 @@ QJsonArray sortJSONByDate(QJsonArray& array){
     }
 
     // 정렬 (숫자 기준 오름차순)
-    std::sort(values.begin(), values.end(), compareJsonByDate);
+    if(mode > 0)
+        std::sort(values.begin(), values.end(), compareJsonByDate_1);
+    else
+        std::sort(values.begin(), values.end(), compareJsonByDate_0);
 
     // 다시 QJsonArray로 변환
     QJsonArray sortedArray;
