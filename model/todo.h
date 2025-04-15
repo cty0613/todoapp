@@ -83,6 +83,8 @@ public:
     void insertToDoJSON();
 
     /*read, search*/
+    int getMaxId();
+    QJsonObject getTodoById(int todoId);
     QJsonArray readToDoJSON(); //default(all array)
     QJsonArray readToDoJSON(QDateTime to, QDateTime from, QString title);
     QJsonArray readToDoJSONAlarm(QDateTime to, QDateTime from, QString title); //for alarm
@@ -94,6 +96,7 @@ private:
     void deleteToDoJSON(QJsonArray& array, int id);
 public:
     void deleteToDoJSON(QString title);
+    void deleteToDoJSON(int id);
     void deleteToDoJSON(QDateTime to, QDateTime from, QString title);
 
     /*SubTask*/

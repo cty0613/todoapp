@@ -32,7 +32,7 @@
    <item alignment="Qt::AlignmentFlag::AlignHCenter">
     <widget class="QWidget" name="cmdGroup" native="true">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -40,7 +40,7 @@
      <property name="minimumSize">
       <size>
        <width>460</width>
-       <height>30</height>
+       <height>60</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -147,13 +147,13 @@
          <bool>false</bool>
         </property>
         <property name="styleSheet">
-         <string notr="true">QComboBox { 
-	color: white;
-	border-radius: 5px; padding: 5px; 
+         <string notr="true">QComboBox {
+        color: white;
+        border-radius: 5px; padding: 5px;
 }
-QComboBox QAbstractItemView { 
-	background-color: #333333;
-	 color: white; 
+QComboBox QAbstractItemView {
+        background-color: #333333;
+         color: white;
 }</string>
         </property>
         <property name="sizeAdjustPolicy">
@@ -186,14 +186,14 @@ QComboBox QAbstractItemView {
      </property>
      <property name="minimumSize">
       <size>
-       <width>450</width>
+       <width>460</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>450</width>
-       <height>16777215</height>
+       <width>460</width>
+       <height>350</height>
       </size>
      </property>
      <property name="focusPolicy">

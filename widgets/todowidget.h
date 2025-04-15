@@ -13,14 +13,25 @@ class TodoWidget : public QWidget
 
 public:
     explicit TodoWidget(
-        QString title="Todo...",
+        int Id,
+        QString title=" ",
         QString iconPath = ":/icon/data/Bookmark.png",
         QWidget *parent = nullptr);
     ~TodoWidget();
 
+signals:
+    void deleteBtnClicked(int todoId);
+    void chkBtnClicked(int todoId);
+    void editBtnClicked(int todoId);
+
 private:
     Ui::TodoWidget *ui;
+    int todoId;
 
+private slots:
+    void onDeleteBtnClicked();
+    void onChkBtnClicked();
+    void onEditBtnClicked();
 
 };
 
