@@ -14,6 +14,7 @@ class TodoWidget : public QWidget
 public:
     explicit TodoWidget(
         int Id,
+        bool completed,
         QString title=" ",
         QString iconPath = ":/icon/data/Bookmark.png",
         QWidget *parent = nullptr);
