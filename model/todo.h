@@ -106,6 +106,8 @@ public:
     void deleteToDoJSON(int id);
     void deleteToDoJSON(QDateTime to, QDateTime from, QString title);
 
+    // sort
+
 
     /*SubTask*/
     void addSubTasksToToDoJSON(ToDo& todo); //all contents must be added except parentTask, subTasks

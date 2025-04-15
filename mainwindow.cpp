@@ -24,8 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->verticalLayout_4->insertWidget(2, scrollArea);           // 기존 위치(두 번째 item)에 삽입
     ui->TodoListGroupLayout->setAlignment(Qt::AlignTop);
 
-    ui->comboBox->addItem(QIcon(":/icon/data/Alphabetical Sorting.png"), "by Title");
-    ui->comboBox->addItem(QIcon(":/icon/data/Reversed Numerical Sorting.png"), "by Date");
+    ui->comboBox->addItem(QIcon(":/icon/data/Reversed Numerical Sorting.png"), "Date Asc");
+    ui->comboBox->addItem(QIcon(":/icon/data/Reversed Numerical Sorting.png"), "Date Dsc");
 
     cmdWidget = new CmdWidget();
     ui->cmdGroupLayout->addWidget(cmdWidget);
@@ -57,6 +57,54 @@ void MainWindow::onNewTodo(const QString &text)
 }
 
 void MainWindow::sortBy(const QString &text) {
+    // layout에 남아 있는 모든 항목을 순차적으로 제거
+    while (QLayoutItem* item = ui->TodoListGroupLayout->takeAt(0)) {
+        // layout에서 위젯을 가져옴
+        QWidget* widget = item->widget();
+        if (widget) {
+            widget->setParent(nullptr);
+            delete widget;   // 위젯 삭제
+        }
+        delete item;  // 레이아웃도 삭제
+    }
+
+
+    disconnectWidgetsInLayout();
+
+    int sortMode;
+
+    QJsonArray todoObjArray = ToDo().readToDoJSON();
+    if ( text == "Date Asc" ) {
+        sortMode = 0;
+    } else if ( text == "Date Dsc" ) {
+        sortMode = 1;
+    }
+    QJsonArray sortedArray = sortJSONByDate(todoObjArray, sortMode);
+        // Todo가 있는 경우 해당하는 위젯 추가
+    for (const QJsonValue &val : sortedArray) {
+        QJsonObject obj = val.toObject();
+        if( !(obj.value("complete").toBool()) ) {
+            int _id = obj["id"].toInt();
+            QString _title = obj["title"].toString();
+            QString _iconPath = obj["iconPath"].toString();
+            TodoWidget* newTodoWidget = new TodoWidget(_id, false, _title, _iconPath, this);
+            ui->TodoListGroupLayout->addWidget(newTodoWidget);
+        }
+    }
+
+    if ( ui->TodoListGroupLayout->count() < 1){ // 미완료된 Todo가 비어있을 경우
+        VoidWidget* emptyDisplay = new VoidWidget();
+        ui->TodoListGroupLayout->addWidget(emptyDisplay);
+    }
+
+
+    // UI를 모두 비운다음
+    // JSON으로부터 읽어와서
+    // 어레이 루프 동안
+    // 각 오브젝트를 뽑고나서
+    // TodoWidget 생성
+
+    connectWidgetsInLayout();
 
 }
 
