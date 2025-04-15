@@ -1,11 +1,12 @@
 #include "todo.h"
+#include <stdexcept>
 
 int ToDo::defaultId = 0;
 
 ToDo::ToDo(QObject *parent)
     : QObject{parent}
 {
-    id = defaultId++;
+    id = getMaxId()+ 1;
 }
 
 ToDo::ToDo(int id) : id{id}{
@@ -18,7 +19,7 @@ ToDo::ToDo(QString title, QString detail, QDateTime date)
 {
     if(title.length() == 0)
         title = "";
-    id = defaultId++;
+    id = getMaxId() + 1;
 }
 
 ToDo::ToDo(QJsonObject& obj){
@@ -221,7 +222,53 @@ QJsonArray ToDo::readToDoJSON(){
     return doc.array();
 }
 
-QJsonArray ToDo::readToDoJSON(QDateTime from, QDateTime to, QString title){
+int ToDo::getMaxId() {
+    QFile file(JSONDATAPATH);
+    int maxId = -1;
+
+    if (file.open(QIODevice::ReadOnly)) {
+        QByteArray jsonData = file.readAll();
+        QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+
+        if (doc.isArray()) {
+            QJsonArray array = doc.array();
+
+            for (const QJsonValue &val : array) {
+                if (val.isObject()) {
+                    QJsonObject obj = val.toObject();
+                    if (obj.contains("id") && obj["id"].isDouble()) {
+                        int currentId = obj["id"].toInt();
+                        if (currentId > maxId) {
+                            maxId = currentId; // 현재 최대값 갱신
+                        }
+                    }
+                }
+            }
+            qDebug() << "최대 ID는:" << maxId;
+        }
+        file.close();
+    }
+    return maxId;
+}
+
+QJsonObject ToDo::getTodoById(int todoId) {
+    QJsonArray fullArray = readToDoJSON();
+
+    for(const QJsonValue &val : fullArray){
+        if(val.isObject()){
+            QJsonObject obj = val.toObject();
+            if (obj.contains("id") && obj["id"].toInt() == todoId) {
+                return obj;
+            }
+        }
+    }
+
+    QString errorMsg = QString("ID가 %1인 할 일이 JSON 데이터에 없습니다.").arg(todoId);
+    qWarning() << errorMsg;  // 경고 출력
+    throw std::runtime_error(errorMsg.toStdString()); // C++ 표준 예외 던지기
+}
+
+QJsonArray ToDo::readToDoJSON(QDateTime to, QDateTime from, QString title = ""){
 
     QJsonArray wholeArray = readToDoJSON();
     QJsonArray wantedArray;
@@ -342,7 +389,15 @@ void ToDo::deleteToDoJSON(QString title)
     overwriteToDoJSONArray(array);
 }
 
-void ToDo::deleteToDoJSON(QDateTime from, QDateTime to, QString title)
+
+void ToDo::deleteToDoJSON(int id){
+    QJsonArray array = readToDoJSON();
+    deleteToDoJSON(array, id);
+    overwriteToDoJSONArray(array);
+
+}
+
+void ToDo::deleteToDoJSON(QDateTime to, QDateTime from, QString title = "")
 {
     QJsonArray array = readToDoJSON();
 
@@ -376,7 +431,7 @@ void ToDo::deleteToDoJSON(QDateTime from, QDateTime to, QString title)
 
 void ToDo::addSubTasksToToDoJSON(ToDo& todo){
     todo.setParentTask(this->Id());
-    this->appendSubTasks(todo.Id());
+    this->subTasks.append(todo.Id());
 
     todo.insertToDoJSON();
 }

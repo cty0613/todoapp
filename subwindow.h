@@ -17,6 +17,7 @@ public:
 
 private:
     Ui::SubWindow *ui;
+    QJsonObject* todoObj;
 };
 
 #endif // SUBWINDOW_H
