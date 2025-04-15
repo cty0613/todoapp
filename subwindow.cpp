@@ -1,7 +1,7 @@
 #include "subwindow.h"
 #include "ui_subwindow.h"
 
-SubWindow::SubWindow(QWidget *parent)
+SubWindow::SubWindow(QJsonObject todo, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::SubWindow)
 {
