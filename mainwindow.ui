@@ -180,21 +180,21 @@ QComboBox QAbstractItemView {
    <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop">
     <widget class="QWidget" name="TodoListGroup" native="true">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>460</width>
+       <width>440</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>460</width>
-       <height>350</height>
+       <height>500</height>
       </size>
      </property>
      <property name="focusPolicy">
