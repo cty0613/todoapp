@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     w.setAttribute(Qt::WA_QuitOnClose, false);
     w.show();
 
-    for(int i = 0; i < 100; i++){
+    for(int i = 0; i < 10; i++){
         ToDo todo("todo" + QString::number(i), "todo "+ QString::number(i) + " is urgent!!");
 
         QDateTime rmd = QDateTime::currentDateTime().addDays(i);
@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
     }
 
     ToDo todo(-1);
-    todo.deleteToDoJSON(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(10), "")
+    //todo.deleteToDoJSON(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(10), "");
 
-    QJsonArray arr = todo.readToDoJSON();
+    QJsonArray arr = todo.readToDoJSON(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(3), "");
     QJsonArray sorted = sortJSONByDate(arr);
     arrDebug(sorted);
 
