@@ -15,16 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // mainwindow.cpp 또는 setupUi 이후에 추가
-    // QScrollArea *scrollArea = new QScrollArea(this);       // 스크롤 영역 생성
-    // scrollArea->setStyleSheet("border-radius: 10px; padding:5px;");
-    // scrollArea->setWidget(ui->TodoListGroup);                    // 기존 TodoListGroup을 감쌈
-    // scrollArea->setWidgetResizable(true);                        // 내부 위젯 크기에 맞게 조절
-    // scrollArea->setFixedHeight(300);                             // 원하는 높이로 고정 (예: 300픽셀)
-
-    // ui->verticalLayout_4->insertWidget(2, scrollArea);        // 기존 위치(두 번째 item)에 삽입
-    // ui->verticalLayout_4->setAlignment(Qt::AlignCenter);
-    // init
 
     ui->comboBox->addItem(QIcon(":/icon/data/Alphabetical Sorting.png"), "by Title");
     ui->comboBox->addItem(QIcon(":/icon/data/Reversed Numerical Sorting.png"), "by Date");
@@ -33,9 +23,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->cmdGroupLayout->addWidget(cmdWidget);
 
     updateList(true);
+    updateDoneList(true);
 
     // cmdWidget의 시그널 sendText와 MainWindow의 슬롯 onNewTodo를 연결
-    // 텍스트 전달 시 새 TodoWidget 추가
     connect(cmdWidget, &CmdWidget::sendText, this, &MainWindow::onNewTodo);
 
 
@@ -106,8 +96,22 @@ void MainWindow::chkTodoDone(const int &todoId){
 }
 
 void MainWindow::editTodoDone(const int &todoId){
-    SubWindow* subw = new SubWindow();
+    QJsonObject targetTodo = ToDo().getTodoById(todoId);
+    SubWindow* subw = new SubWindow(targetTodo);
     subw->show();
+
+    // todoSave 시그널이 발생했을 때 subw 닫고 삭제
+    connect(subw, &SubWindow::todoSave, this, [subw, this]() {
+        subw->close();          // 창 닫기
+        subw->deleteLater();    // 안전하게 메모리에서 제거
+        this->updateList(false);
+    });
+
+    // todoCancel 시그널이 발생했을 때도 동일하게 처리
+    connect(subw, &SubWindow::todoCancel, this, [subw]() {
+        subw->close();
+        subw->deleteLater();
+    });
 }
 
 
@@ -136,7 +140,7 @@ void MainWindow::updateList(bool initLoad){
             int _id = obj["id"].toInt();
             QString _title = obj["title"].toString();
             QString _iconPath = obj["iconPath"].toString();
-            TodoWidget* newTodoWidget = new TodoWidget(_id, _title, _iconPath, this);
+            TodoWidget* newTodoWidget = new TodoWidget(_id, false, _title, _iconPath, this);
             ui->TodoListGroupLayout->addWidget(newTodoWidget);
         }
     }
@@ -189,9 +193,14 @@ void MainWindow::updateDoneList(bool initLoad){
             int _id = obj["id"].toInt();
             QString _title = obj["title"].toString();
             QString _iconPath = obj["iconPath"].toString();
-            TodoWidget* newTodoWidget = new TodoWidget(_id, _title, _iconPath, this);
+            TodoWidget* newTodoWidget = new TodoWidget(_id, true, _title, _iconPath, this);
             ui->doneListGroupLayout->addWidget(newTodoWidget);
         }
+    }
+
+    if ( ui->doneListGroupLayout->count() < 1){ // 완료된 Todo가 비어있을 경우
+        VoidWidget* emptyDisplay = new VoidWidget();
+        ui->doneListGroupLayout->addWidget(emptyDisplay);
     }
 
     connectWidgetsInDoneLayout();

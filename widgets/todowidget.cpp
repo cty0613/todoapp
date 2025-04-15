@@ -1,7 +1,7 @@
 #include "todowidget.h"
 #include "ui_todowidget.h"
 
-TodoWidget::TodoWidget(int Id, QString title, QString iconPath,  QWidget *parent)
+TodoWidget::TodoWidget(int Id, bool completed, QString title, QString iconPath,  QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::TodoWidget)
 {
@@ -12,6 +12,11 @@ TodoWidget::TodoWidget(int Id, QString title, QString iconPath,  QWidget *parent
     ui->setupUi(this);
     ui->icon->setPixmap(icon);
     ui->todoTitle->setText(title);
+
+    if(completed){
+        ui->todoTitle->setStyleSheet("text-decoration: line-through; color:grey;");
+
+    }
 
     connect(ui->deleteBtn, &QPushButton::clicked,
             this, &TodoWidget::onDeleteBtnClicked);
