@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 
+#include "subwindow.h"
 #include <QApplication>
 
 #include "model/reminder.h"
@@ -41,14 +42,9 @@ int main(int argc, char *argv[])
         QDateTime rmd = QDateTime::currentDateTime().addSecs(60 * i);
         todo.setReminder(rmd);
         todo.setDate(rmd);
-
         todo.insertToDoJSON();
         //arrDebug(todo.readToDoJSON());
     }
-
-    ToDo todo(-1);
-    Reminder rmd;
-    rmd.setReminder(&todo);
 
     return a.exec();
 }
