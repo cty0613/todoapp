@@ -35,6 +35,9 @@
    <string notr="true"/>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>10</number>
+   </property>
    <property name="leftMargin">
     <number>10</number>
    </property>
@@ -51,14 +54,14 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>25</width>
-       <height>25</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>25</width>
-       <height>25</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
      <property name="text">
@@ -107,8 +110,8 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>25</width>
-       <height>25</height>
+       <width>30</width>
+       <height>20</height>
       </size>
      </property>
     </widget>
@@ -125,12 +128,12 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../resource.qrc">
+      <iconset theme="user-trash" resource="../resource.qrc">
        <normaloff>:/icon/data/Delete.png</normaloff>:/icon/data/Delete.png</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
+       <width>30</width>
        <height>20</height>
       </size>
      </property>
@@ -153,7 +156,7 @@
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
+       <width>30</width>
        <height>20</height>
       </size>
      </property>

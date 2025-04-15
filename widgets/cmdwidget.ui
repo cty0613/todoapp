@@ -62,7 +62,10 @@ padding-left:10px</string>
       <number>1000</number>
      </property>
      <property name="placeholderText">
-      <string extracomment="input command ..."/>
+      <string extracomment=" add todo..."/>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

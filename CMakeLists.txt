@@ -24,6 +24,7 @@ qt_add_executable(todoapp
     model/todo.h model/todo.cpp
     model/reminder.h model/reminder.cpp
     data/todo.json
+    widgets/voidwidget.h widgets/voidwidget.cpp widgets/voidwidget.ui
 )
 
 target_link_libraries(todoapp

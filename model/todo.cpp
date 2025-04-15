@@ -14,8 +14,8 @@ ToDo::ToDo(int id) : id{id}{
     //reading하는 용도로 선언, 다른 용도인 경우 id를 직접 선언하지 말 것
 }
 
-ToDo::ToDo(QString title, QString detail, QDateTime date)
-    : title{title}, date{date}, detail{detail}
+ToDo::ToDo(QString title, QString detail, QString iconPath, QDateTime date)
+    : title{title}, date{date}, iconPath(iconPath), detail{detail}
 {
     if(title.length() == 0)
         title = "";
@@ -116,8 +116,8 @@ void ToDo::setDataUsingObj(QJsonObject& obj){
     title = obj.value("title").toString();
     complete = obj.value("complete").toBool();
     iconPath = obj.value("iconPath").toString();
-    date = QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd");
-    reminder = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:hh:mm");
+    date = QDateTime::fromString(obj.value("date").toString(), "yyyy-MM-dd");
+    reminder = QDateTime::fromString(obj.value("reminder").toString(), "yyyy-MM-dd HH:mm");
     reminded = obj.value("reminded").toBool();
     detail = obj.value("detail").toString();
     parentTask = obj.value("parentTask").toInt();
@@ -142,8 +142,8 @@ QJsonObject ToDo::toDoJSONObj(){
     obj["title"] = title;
     obj["complete"] = complete;
     obj["iconPath"] = iconPath;
-    obj["date"] = date.toString("yyyy:MM:dd");
-    obj["reminder"] = reminder.toString("yyyy:MM:dd:hh:mm");
+    obj["date"] = date.toString("yyyy-MM-dd");
+    obj["reminder"] = reminder.toString("yyyy-MM-dd HH:mm");
     obj["reminded"] = reminded;
     obj["detail"] = detail;
     obj["parentTask"] = parentTask;
@@ -282,7 +282,7 @@ QJsonArray ToDo::readToDoJSON(QDateTime to, QDateTime from, QString title = ""){
 
         QJsonObject obj = value.toObject();
         QString dateStr = obj.value("date").toString();
-        QDateTime dt = QDateTime::fromString(dateStr, "yyyy:MM:dd");
+        QDateTime dt = QDateTime::fromString(dateStr, "yyyy-MM-dd");
 
         if (!dt.isValid()) {
             qWarning() << "Invalid date format:" << dateStr;
@@ -312,7 +312,7 @@ QJsonArray ToDo::readToDoJSONAlarm(QDateTime from, QDateTime to, QString title)
 
         QJsonObject obj = value.toObject();
         QString dateStr = obj.value("reminder").toString();
-        QDateTime dt = QDateTime::fromString(dateStr, "yyyy:MM:dd:hh:mm");
+        QDateTime dt = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
 
         if (!dt.isValid()) {
             qWarning() << "Invalid date format:" << dateStr;
@@ -407,7 +407,7 @@ void ToDo::deleteToDoJSON(QDateTime to, QDateTime from, QString title = "")
 
             QJsonObject obj = val.toObject();
             QString dateStr = obj.value("date").toString();
-            QDateTime dt = QDateTime::fromString(dateStr, "yyyy:MM:dd");
+            QDateTime dt = QDateTime::fromString(dateStr, "yyyy-MM-dd");
 
             // 시간 정규화
             from.setTime(QTime(0, 0, 0));
@@ -455,12 +455,12 @@ bool compareJsonByDate_1(QJsonValue& a, QJsonValue& b){
 
     QJsonObject obja = a.toObject();
     QString dateStra = obja.value("date").toString();
-    QDateTime dta = QDateTime::fromString(dateStra, "yyyy:MM:dd");
+    QDateTime dta = QDateTime::fromString(dateStra, "yyyy-MM-dd");
     dta.setTime(QTime(0, 0, 0));
 
     QJsonObject objb = b.toObject();
     QString dateStrb = objb.value("date").toString();
-    QDateTime dtb = QDateTime::fromString(dateStrb, "yyyy:MM:dd");
+    QDateTime dtb = QDateTime::fromString(dateStrb, "yyyy-MM-dd");
     dtb.setTime(QTime(0, 0, 0));
 
     return dta > dtb;
