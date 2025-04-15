@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         QDateTime rmd = QDateTime::currentDateTime().addSecs(60 * i);
         todo.setReminder(rmd);
         todo.setDate(rmd);
-        todo.insertToDoJSON();
+        todo.insertToDoJSON()
         //arrDebug(todo.readToDoJSON());
     }
 
