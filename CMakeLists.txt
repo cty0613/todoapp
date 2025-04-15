@@ -12,7 +12,7 @@ qt_add_executable(todoapp
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
-    model/reminder.h model/reminder.cpp
+
     model/todo.h model/todo.cpp
     model/reminder.h model/reminder.cpp
     data/todo.json

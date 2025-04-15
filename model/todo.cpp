@@ -10,6 +10,7 @@ ToDo::ToDo(QObject *parent)
 
 ToDo::ToDo(int id) : id{id}{
     //id를 이용하여 맴버 채우기
+    //reading하는 용도로 선언, 다른 용도인 경우 id를 직접 선언하지 말 것
 }
 
 ToDo::ToDo(QString title, QString detail, QDateTime date)
@@ -18,6 +19,10 @@ ToDo::ToDo(QString title, QString detail, QDateTime date)
     if(title.length() == 0)
         title = "";
     id = defaultId++;
+}
+
+ToDo::ToDo(QJsonObject& obj){
+    setDataUsingObj(obj);
 }
 
 /*public function*/
@@ -59,6 +64,13 @@ void ToDo::setReminder(const QDateTime &newReminder)
     reminder = newReminder;
 }
 
+bool ToDo::Reminded(){
+    return reminded;
+}
+void ToDo::toggleReminded(){
+    reminded = !reminded;
+}
+
 QString ToDo::Detail() const
 {
     return detail;
@@ -85,6 +97,31 @@ void ToDo::setSubTasks(const QVector<int> &newSubTasks)
 {
     subTasks = newSubTasks;
 }
+void ToDo::appendSubTasks(int id){
+    this->subTasks.append(id);
+}
+
+void ToDo::setDataUsingObj(QJsonObject& obj){
+    id = obj.value("id").toInt();
+    title = obj.value("title").toString();
+    complete = obj.value("complete").toBool();
+    iconPath = obj.value("iconPath").toString();
+    date = QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd");
+    reminder = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:HH:mm");
+    reminded = obj.value("reminded").toBool();
+    detail = obj.value("detail").toString();
+    parentTask = obj.value("parentTask").toInt();
+
+    QVector<int> vec;
+    QJsonArray array = obj.value("subTasks").toArray();
+    if(!array.empty()){
+        for(int i = 0; i < array.size(); i++){
+            QJsonValue value = array.at(i);
+            vec.append(static_cast<int>(value.toInt()));
+        }
+    }
+    subTasks = vec;
+}
 
 /*JSON File CRUD*/
 /*return JSONObj*/
@@ -97,6 +134,7 @@ QJsonObject ToDo::toDoJSONObj(){
     obj["iconPath"] = iconPath;
     obj["date"] = date.toString("yyyy:MM:dd");
     obj["reminder"] = reminder.toString("yyyy:MM:dd:HH:mm");
+    obj["reminded"] = reminded;
     obj["detail"] = detail;
     obj["parentTask"] = parentTask;
 
@@ -191,19 +229,61 @@ QJsonArray ToDo::readToDoJSON(QDateTime to, QDateTime from, QString title = ""){
                 if(obj.value("title").toString() == title){
                     wantedArray.append(obj);
 
-                    qDebug() << "1";
-                    QJsonParseError parseError;
-                    QJsonDocument doc(wantedArray);
+                    // qDebug() << "1";
+                    // QJsonParseError parseError;
+                    // QJsonDocument doc(wantedArray);
                     //qDebug() << QString::fromUtf8(doc.toJson());
                 }
             }
             else{
-                qDebug() << "2";
+                // qDebug() << "2";
 
                 wantedArray.append(obj);
 
-                QJsonParseError parseError;
-                QJsonDocument doc(wantedArray);
+                // QJsonParseError parseError;
+                // QJsonDocument doc(wantedArray);
+                //qDebug() << QString::fromUtf8(doc.toJson());
+            }
+        }
+    }
+
+    //QJsonParseError parseError;
+    //QJsonDocument doc(wantedArray);
+    //qDebug() << QString::fromUtf8(doc.toJson());
+
+    return wantedArray;
+}
+
+QJsonArray ToDo::readToDoJSONAlarm(QDateTime to, QDateTime from, QString title)
+{
+    QJsonArray wholeArray = readToDoJSON();
+    QJsonArray wantedArray;
+
+    for(int i = 0; i < wholeArray.size(); i++){
+        QJsonValue value = wholeArray.at(i);
+        if(!value.isObject()) continue;
+
+        QJsonObject obj = value.toObject();
+        if(to.daysTo(QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:HH:mm")) <= 0 &&
+            from.daysTo(QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:HH:mm")) >= 0
+            ){
+            if(title.length() > 0){
+                if(obj.value("title").toString() == title){
+                    wantedArray.append(obj);
+
+                    // qDebug() << "1";
+                    // QJsonParseError parseError;
+                    // QJsonDocument doc(wantedArray);
+                    //qDebug() << QString::fromUtf8(doc.toJson());
+                }
+            }
+            else{
+                // qDebug() << "2";
+
+                wantedArray.append(obj);
+
+                // QJsonParseError parseError;
+                // QJsonDocument doc(wantedArray);
                 //qDebug() << QString::fromUtf8(doc.toJson());
             }
         }
@@ -284,7 +364,8 @@ void ToDo::deleteToDoJSON(QDateTime to, QDateTime from, QString title = "")
             QJsonObject obj = val.toObject();
 
             if(to.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) <= 0 &&
-                from.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) >= 0
+                from.daysTo(QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd")) >= 0 &&
+                (!obj.value("reminded").toBool())
                 ){
                 if(title.length() > 0){
                     if(obj.value("title") == title){
@@ -301,3 +382,9 @@ void ToDo::deleteToDoJSON(QDateTime to, QDateTime from, QString title = "")
     overwriteToDoJSONArray(array);
 }
 
+void ToDo::addSubTasksToToDoJSON(ToDo& todo){
+    todo.setParentTask(this->Id());
+    this->appendSubTasks(todo.Id());
+
+    todo.insertToDoJSON();
+}

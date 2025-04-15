@@ -30,6 +30,7 @@ private:
     QString iconPath{""};
     QDateTime date;                 //converted into string before createJSONFILE
     QDateTime reminder;
+    bool reminded{false};
     QString detail{""};
     int parentTask = -1;            //-1 for no parent
     QVector<int> subTasks;          // subtask id stored
@@ -39,6 +40,8 @@ public:
     ToDo(int id);
     ToDo(QString title,
          QString detail = "", QDateTime date = QDateTime::currentDateTime());
+    ToDo(QJsonObject& obj);
+
 
     /*setter and getter*/
     int Id() const;
@@ -53,28 +56,36 @@ public:
     QDateTime Reminder() const;
     void setReminder(const QDateTime &newReminder);
 
+    bool Reminded();
+    void toggleReminded();
+
     QString Detail() const;
     void setDetail(const QString &newDetail);
-
-    QVector<int> SubTasks() const;
-    void setSubTasks(const QVector<int> &newSubTasks);
 
     int ParentTask() const;
     void setParentTask(int newParentTask);
 
+    QVector<int> SubTasks() const;
+    void setSubTasks(const QVector<int> &newSubTasks);
+    void appendSubTasks(int id);
+
+    void setDataUsingObj(QJsonObject& obj); //deep copy
+
     /*File CRUD*/
 private:
-    QJsonObject toDoJSONObj();
     int duplicated(QJsonArray& arr, int id);
     void overwriteToDoJSONArray(QJsonArray& arr);
     void overwriteToDoJSONArray(QJsonArray& arr, int pos, QJsonObject& obj); //-1 for append
 public:
+    QJsonObject toDoJSONObj();
+
     /*create(insert)*/
     void insertToDoJSON();
 
     /*read, search*/
     QJsonArray readToDoJSON(); //default(all array)
     QJsonArray readToDoJSON(QDateTime to, QDateTime from, QString title);
+    QJsonArray readToDoJSONAlarm(QDateTime to, QDateTime from, QString title); //for alarm
     /*update*/
     void updateToDoJSON();
 
@@ -84,6 +95,9 @@ private:
 public:
     void deleteToDoJSON(QString title);
     void deleteToDoJSON(QDateTime to, QDateTime from, QString title);
+
+    /*SubTask*/
+    void addSubTasksToToDoJSON(ToDo& todo); //all contents must be added except parentTask, subTasks
 
 signals:
     //later connect
