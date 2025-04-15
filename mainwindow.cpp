@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "widgets/todowidget.h"
 
 #include <QIcon>
 
@@ -16,20 +17,21 @@ MainWindow::MainWindow(QWidget *parent)
     cmdWidget = new CmdWidget();
     ui->cmdGroupLayout->addWidget(cmdWidget);
 
-    todo1 = new TodoWidget("Hello", this);
-    todo2 = new TodoWidget("Hello", this);
-    todo3 = new TodoWidget("Hello", this);
-    ui->TodoListGroupLayout->addWidget(todo1);
-    ui->TodoListGroupLayout->addWidget(todo2);
-    ui->TodoListGroupLayout->addWidget(todo3);
-
-
-    todo_d = new TodoWidget("Done", this);
-    ui->doneListGroupLayout->addWidget(todo_d);
-
+    // cmdWidget의 시그널 sendText와 MainWindow의 슬롯 onNewTodo를 연결
+    // 텍스트 전달 시 새 TodoWidget 추가
+    connect(cmdWidget, &CmdWidget::sendText, this, &MainWindow::onNewTodo);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::onNewTodo(const QString &text)
+{
+    // 전달받은 텍스트로 새로운 TodoWidget 생성
+    TodoWidget *newTodo = new TodoWidget(text, ":/icon/data/Music.png", this);
+
+    // 생성된 TodoWidget을 TodoListGroupLayout에 추가하여 화면에 표시
+    ui->TodoListGroupLayout->addWidget(newTodo);  // 레이아웃에 새 TodoWidget 배치
 }
