@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>data/todo.json</file>
+        <file>res/res.qrc</file>
+    </qresource>
+</RCC>
