@@ -50,6 +50,9 @@ public:
     QString Title() const;
     void setTitle(const QString &newTitle);
 
+    QDateTime Date() const;
+    void setDate(const QDateTime &newDate);
+
     bool Complete() const;
     void toggleComplete();
 
@@ -84,8 +87,8 @@ public:
 
     /*read, search*/
     QJsonArray readToDoJSON(); //default(all array)
-    QJsonArray readToDoJSON(QDateTime to, QDateTime from, QString title);
-    QJsonArray readToDoJSONAlarm(QDateTime to, QDateTime from, QString title); //for alarm
+    QJsonArray readToDoJSON(QDateTime from, QDateTime to, QString title);
+    QJsonArray readToDoJSONAlarm(QDateTime from, QDateTime to, QString title); //for alarm
     /*update*/
     void updateToDoJSON();
 
@@ -94,7 +97,7 @@ private:
     void deleteToDoJSON(QJsonArray& array, int id);
 public:
     void deleteToDoJSON(QString title);
-    void deleteToDoJSON(QDateTime to, QDateTime from, QString title);
+    void deleteToDoJSON(QDateTime from, QDateTime to, QString title);
 
     /*SubTask*/
     void addSubTasksToToDoJSON(ToDo& todo); //all contents must be added except parentTask, subTasks
