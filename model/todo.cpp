@@ -116,7 +116,7 @@ void ToDo::setDataUsingObj(QJsonObject& obj){
     complete = obj.value("complete").toBool();
     iconPath = obj.value("iconPath").toString();
     date = QDateTime::fromString(obj.value("date").toString(), "yyyy:MM:dd");
-    reminder = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:HH:mm");
+    reminder = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:hh:mm");
     reminded = obj.value("reminded").toBool();
     detail = obj.value("detail").toString();
     parentTask = obj.value("parentTask").toInt();
@@ -142,7 +142,7 @@ QJsonObject ToDo::toDoJSONObj(){
     obj["complete"] = complete;
     obj["iconPath"] = iconPath;
     obj["date"] = date.toString("yyyy:MM:dd");
-    obj["reminder"] = reminder.toString("yyyy:MM:dd:HH:mm");
+    obj["reminder"] = reminder.toString("yyyy:MM:dd:hh:mm");
     obj["reminded"] = reminded;
     obj["detail"] = detail;
     obj["parentTask"] = parentTask;
@@ -265,7 +265,7 @@ QJsonArray ToDo::readToDoJSONAlarm(QDateTime from, QDateTime to, QString title)
 
         QJsonObject obj = value.toObject();
         QString dateStr = obj.value("reminder").toString();
-        QDateTime dt = QDateTime::fromString(dateStr, "yyyy:MM:dd:HH:mm");
+        QDateTime dt = QDateTime::fromString(dateStr, "yyyy:MM:dd:hh:mm");
 
         if (!dt.isValid()) {
             qWarning() << "Invalid date format:" << dateStr;

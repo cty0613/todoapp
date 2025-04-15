@@ -38,16 +38,21 @@ void Reminder::setReminder(ToDo* rwToDo)
 
 void Reminder::checkReminder()
 {
-    QJsonArray array = rwToDo->readToDoJSONAlarm(QDateTime::currentDateTime().addDays(10),
-                                            QDateTime::currentDateTime(), "");
+    QJsonArray array = rwToDo->readToDoJSONAlarm(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(10), "");
     if(!array.empty()){
         for(int i = 0; i < array.size(); i++){
             QJsonValue value = array.at(i);
             if(!value.isObject()) continue;
 
             QJsonObject obj = value.toObject();
-            QDateTime target = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:HH:mm");
-            if(target <= QDateTime::currentDateTime()){
+            QDateTime target = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:hh:mm");
+
+            if(target <= QDateTime::currentDateTime()
+                && (!obj.value("reminded").toBool())){
+
+                //qDebug() << target.toString();
+                //qDebug() << QDateTime::currentDateTime().toString();
+
                 trayIcon->showMessage(
                     "ToDo App Alarm",
                     obj.value("title").toString(),
