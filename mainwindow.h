@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "widgets/cmdwidget.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -19,5 +21,11 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    CmdWidget* cmdWidget;
+
+private slots:
+    void onNewTodo(const QString &text);
+    // cmdWidget에서 전달받은 텍스트로 새 TodoWidget 생성하는 슬롯
+
 };
 #endif // WIDGET_H

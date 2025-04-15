@@ -4,6 +4,11 @@ project(todoapp LANGUAGES CXX)
 include_directories("cmake-build-debug/${PROJECT_NAME}_autogen/include")
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 
+
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+
 qt_standard_project_setup()
 
 qt_add_executable(todoapp
@@ -12,7 +17,10 @@ qt_add_executable(todoapp
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
-
+    resource.qrc
+    subwindow.h subwindow.cpp subwindow.ui
+    widgets/cmdwidget.h widgets/cmdwidget.cpp widgets/cmdwidget.ui
+    widgets/todowidget.h widgets/todowidget.cpp widgets/todowidget.ui
     model/todo.h model/todo.cpp
     model/reminder.h model/reminder.cpp
     data/todo.json

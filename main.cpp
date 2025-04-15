@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 
+#include "subwindow.h"
 #include <QApplication>
 
 #include "model/reminder.h"
@@ -58,8 +59,7 @@ int main(int argc, char *argv[])
 
     QJsonObject obj = todo_3.toDoJSONObj();
     ToDo todo_4(obj);
-
-
+  
     return a.exec();
 }
 
