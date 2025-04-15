@@ -106,4 +106,7 @@ signals:
     //later connect
 };
 
+
+QJsonArray sortJSONByDate(QJsonArray& array);
+
 #endif // TODO_H

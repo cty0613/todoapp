@@ -1,8 +1,8 @@
 #include "cmdwidget.h"
-//#include "ui_cmdwidget.h"
+#include "ui_cmdwidget.h"
 
 CmdWidget::CmdWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent), ui(new Ui::CmdWidget)
 {
     ui->setupUi(this);
     connect(ui->pushButton, &QPushButton::clicked,

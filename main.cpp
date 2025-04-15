@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 
-#include "subwindow.h"
 #include <QApplication>
 
 #include "model/reminder.h"
@@ -39,12 +38,23 @@ int main(int argc, char *argv[])
     for(int i = 0; i < 10; i++){
         ToDo todo("todo" + QString::number(i), "todo "+ QString::number(i) + " is urgent!!");
 
-        QDateTime rmd = QDateTime::currentDateTime().addSecs(60 * i);
+        QDateTime rmd = QDateTime::currentDateTime().addDays(i);
         todo.setReminder(rmd);
         todo.setDate(rmd);
+
         todo.insertToDoJSON();
         //arrDebug(todo.readToDoJSON());
     }
+
+    ToDo todo(-1);
+    //todo.deleteToDoJSON(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(10), "");
+
+    QJsonArray arr = todo.readToDoJSON(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(3), "");
+    QJsonArray sorted = sortJSONByDate(arr);
+    arrDebug(sorted);
+
+    //Reminder rmd;
+    //rmd.setReminder(&todo);
 
     return a.exec();
 }

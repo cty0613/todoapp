@@ -380,3 +380,39 @@ void ToDo::addSubTasksToToDoJSON(ToDo& todo){
 
     todo.insertToDoJSON();
 }
+
+bool compareJsonByDate(QJsonValue& a, QJsonValue& b){
+
+    QJsonObject obja = a.toObject();
+    QString dateStra = obja.value("date").toString();
+    QDateTime dta = QDateTime::fromString(dateStra, "yyyy:MM:dd");
+    dta.setTime(QTime(0, 0, 0));
+
+    QJsonObject objb = b.toObject();
+    QString dateStrb = objb.value("date").toString();
+    QDateTime dtb = QDateTime::fromString(dateStrb, "yyyy:MM:dd");
+    dtb.setTime(QTime(0, 0, 0));
+
+    return dta > dtb;
+}
+
+QJsonArray sortJSONByDate(QJsonArray& array){
+    //최신순 정렬
+    QVector<QJsonValue> values;
+
+    // QJsonArray -> QVector<QJsonValue>로 변환
+    for (const QJsonValue& val : array) {
+        values.append(val);
+    }
+
+    // 정렬 (숫자 기준 오름차순)
+    std::sort(values.begin(), values.end(), compareJsonByDate);
+
+    // 다시 QJsonArray로 변환
+    QJsonArray sortedArray;
+    for (const QJsonValue& val : values) {
+        sortedArray.append(val);
+    }
+
+    return sortedArray;
+}
