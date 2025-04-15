@@ -3,6 +3,9 @@
 
 #include <QWidget>
 
+#include "widgets/cmdwidget.h"
+#include "widgets/todowidget.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -19,5 +22,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    CmdWidget* cmdWidget;
+    TodoWidget* todo1;
+    TodoWidget* todo2;
+    TodoWidget* todo3;
+    TodoWidget* todo_d;
+
 };
 #endif // WIDGET_H

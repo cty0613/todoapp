@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>data/Alphabetical Sorting.png</file>
+        <file>data/Binoculars.png</file>
+        <file>data/Bookmark.png</file>
+        <file>data/Box.png</file>
+        <file>data/Clock.png</file>
+        <file>data/Connect.png</file>
+        <file>data/Contacts.png</file>
+        <file>data/Delete.png</file>
+        <file>data/Document.png</file>
+        <file>data/Done.png</file>
+        <file>data/Edit.png</file>
+        <file>data/Ellipsis.png</file>
+        <file>data/Female User.png</file>
+        <file>data/Home.png</file>
+        <file>data/Music.png</file>
+        <file>data/Reversed Numerical Sorting.png</file>
+        <file>data/Speech Bubble.png</file>
+        <file>data/User Male.png</file>
+    </qresource>
+</RCC>
