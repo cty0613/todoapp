@@ -4,7 +4,7 @@
 #include <QDebug>
 
 Reminder::Reminder(QObject *parent)
-    : QObject(parent), rwToDo(nullptr),
+    : QObject(parent), rwToDo(new ToDo()),
     trayIcon(new QSystemTrayIcon(this)),
     timer(new QTimer(this))
 {
@@ -30,14 +30,15 @@ Reminder::Reminder(QObject *parent)
     timer->start(1000);
 }
 
-void Reminder::setReminder(ToDo* rwToDo)
+/*void Reminder::setReminder(ToDo* rwToDo)
 {
     if(rwToDo != nullptr)
         this->rwToDo = rwToDo;
-}
+}*/
 
 void Reminder::checkReminder()
 {
+    qDebug() << "count";
     QJsonArray array = rwToDo->readToDoJSONAlarm(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(10), "");
     if(!array.empty()){
         for(int i = 0; i < array.size(); i++){
@@ -48,10 +49,22 @@ void Reminder::checkReminder()
             QDateTime target = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:hh:mm");
 
             if(target <= QDateTime::currentDateTime()
-                && (!obj.value("reminded").toBool())){
+                && (!obj.value("reminded").toBool())
+                && (!obj.value("complete").toBool())){
 
-                //qDebug() << target.toString();
-                //qDebug() << QDateTime::currentDateTime().toString();
+                qDebug() << target.toString();
+                qDebug() << QDateTime::currentDateTime().toString();
+
+                QString iconPath = obj.value("iconPath").toString();
+                QFileInfo iconFile(iconPath);
+
+                if (iconFile.exists() && iconFile.isFile()) {
+                    QIcon customIcon(iconPath);
+                    trayIcon->setIcon(customIcon);
+                } else {
+                    qDebug() << "Invalid icon path:" << iconPath;
+                    trayIcon->setIcon(QIcon(":/default/icons/default_icon.png")); // 기본 아이콘 대체
+                }
 
                 trayIcon->showMessage(
                     "ToDo App Alarm",
@@ -60,6 +73,7 @@ void Reminder::checkReminder()
                     10000
                 );
 
+                qDebug() << "check";
                 ToDo toUpdate(obj);
                 toUpdate.toggleReminded();
                 toUpdate.updateToDoJSON();
