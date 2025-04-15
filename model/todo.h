@@ -39,7 +39,9 @@ public:
     explicit ToDo(QObject *parent = nullptr);
     ToDo(int id);
     ToDo(QString title,
-         QString detail = "", QDateTime date = QDateTime::currentDateTime());
+         QString detail = "",
+         QString iconPath = ":/icon/data/Bookmark.png",
+         QDateTime date = QDateTime::currentDateTime());
     ToDo(QJsonObject& obj);
 
 
@@ -79,6 +81,7 @@ private:
     int duplicated(QJsonArray& arr, int id);
     void overwriteToDoJSONArray(QJsonArray& arr);
     void overwriteToDoJSONArray(QJsonArray& arr, int pos, QJsonObject& obj); //-1 for append
+
 public:
     QJsonObject toDoJSONObj();
 
@@ -91,6 +94,7 @@ public:
     QJsonArray readToDoJSON(); //default(all array)
     QJsonArray readToDoJSON(QDateTime from, QDateTime to, QString title);
     QJsonArray readToDoJSONAlarm(QDateTime from, QDateTime to, QString title); //for alarm
+
     /*update*/
     void updateToDoJSON();
 

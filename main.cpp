@@ -31,11 +31,11 @@ void objDebug(QJsonObject obj){
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QFont appFont("NanumGothic", 10);
+    a.setFont(appFont);
     MainWindow w;
-    SubWindow sw;
     // w.setAttribute(Qt::WA_QuitOnClose, false);
     w.show();
-    sw.hide();
   
     return a.exec();
 }

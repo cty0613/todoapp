@@ -27,5 +27,6 @@ void CmdWidget::onPushButtonClicked()
     // 텍스트가 비어있지 않으면 시그널을 발생시킴
     if (!inputText.isEmpty()) {     // 텍스트가 있다면
         emit sendText(inputText);   // 입력 텍스트를 전달하는 시그널 발생
+        ui->lineEdit->clear();
     }
 }

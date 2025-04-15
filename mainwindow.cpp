@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "subwindow.h"
 #include "widgets/todowidget.h"
+#include "widgets/voidwidget.h"
 #include "model/todo.h"
 
 #include <QScrollArea>
@@ -69,9 +71,22 @@ void MainWindow::chkTodo(const int &todoId){
 }
 
 void MainWindow::editTodo(const int &todoId){
-    SubWindow* subw = new SubWindow();
+    QJsonObject targetTodo = ToDo().getTodoById(todoId);
+    SubWindow* subw = new SubWindow(targetTodo);
     subw->show();
 
+    // todoSave 시그널이 발생했을 때 subw 닫고 삭제
+    connect(subw, &SubWindow::todoSave, this, [subw, this]() {
+        subw->close();          // 창 닫기
+        subw->deleteLater();    // 안전하게 메모리에서 제거
+        this->updateList(false);
+    });
+
+    // todoCancel 시그널이 발생했을 때도 동일하게 처리
+    connect(subw, &SubWindow::todoCancel, this, [subw]() {
+        subw->close();
+        subw->deleteLater();
+    });
 }
 
 
@@ -93,22 +108,29 @@ void MainWindow::updateList(bool initLoad){
     disconnectWidgetsInLayout();
 
     QJsonArray todoObjArray = ToDo().readToDoJSON();
-    qDebug() << todoObjArray.size();
+     // Todo가 있는 경우 해당하는 위젯 추가
+    for (const QJsonValue &val : todoObjArray) {
+        QJsonObject obj = val.toObject();
+        if( !(obj.value("complete").toBool()) ) {
+            int _id = obj["id"].toInt();
+            QString _title = obj["title"].toString();
+            QString _iconPath = obj["iconPath"].toString();
+            TodoWidget* newTodoWidget = new TodoWidget(_id, _title, _iconPath, this);
+            ui->TodoListGroupLayout->addWidget(newTodoWidget);
+        }
+    }
+
+    if ( ui->TodoListGroupLayout->count() < 1){ // 미완료된 Todo가 비어있을 경우
+        VoidWidget* emptyDisplay = new VoidWidget();
+        ui->TodoListGroupLayout->addWidget(emptyDisplay);
+    }
+
 
     // UI를 모두 비운다음
     // JSON으로부터 읽어와서
     // 어레이 루프 동안
     // 각 오브젝트를 뽑고나서
     // TodoWidget 생성
-
-    for (const QJsonValue &val : todoObjArray) {
-        QJsonObject obj = val.toObject();
-        int _id = obj["id"].toInt();
-        QString _title = obj["title"].toString();
-        QString _iconPath = obj["iconPath"].toString();
-        TodoWidget* newTodoWidget = new TodoWidget(_id, _title, _iconPath, this);
-        ui->TodoListGroupLayout->addWidget(newTodoWidget);
-    }
 
     connectWidgetsInLayout();
 

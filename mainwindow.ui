@@ -110,7 +110,8 @@
          <enum>Qt::LayoutDirection::LeftToRight</enum>
         </property>
         <property name="styleSheet">
-         <string notr="true">color: white</string>
+         <string notr="true">color: white;
+font-weight : 700;</string>
         </property>
         <property name="text">
          <string>Task to Do</string>
@@ -127,13 +128,13 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>100</width>
+          <width>110</width>
           <height>30</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>100</width>
+          <width>110</width>
           <height>30</height>
          </size>
         </property>
@@ -240,7 +241,8 @@ background: #15101C;</string>
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">color: white;</string>
+         <string notr="true">color: white;
+font-weight: 700;</string>
         </property>
         <property name="text">
          <string>Done</string>
