@@ -7,11 +7,13 @@ ToDo::ToDo(QObject *parent)
     : QObject{parent}
 {
     id = getMaxId()+ 1;
+    reminder = QDateTime::currentDateTime().addSecs(43200);
 }
 
 ToDo::ToDo(int id) : id{id}{
     //id를 이용하여 맴버 채우기
     //reading하는 용도로 선언, 다른 용도인 경우 id를 직접 선언하지 말 것
+    reminder = QDateTime::currentDateTime().addSecs(43200);
 }
 
 ToDo::ToDo(QString title, QString detail, QString iconPath, QDateTime date)
@@ -20,6 +22,8 @@ ToDo::ToDo(QString title, QString detail, QString iconPath, QDateTime date)
     if(title.length() == 0)
         title = "";
     id = getMaxId() + 1;
+
+    reminder = QDateTime::currentDateTime().addSecs(43200);
 }
 
 ToDo::ToDo(QJsonObject& obj){

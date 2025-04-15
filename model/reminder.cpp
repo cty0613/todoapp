@@ -38,7 +38,7 @@ Reminder::Reminder(QObject *parent)
 
 void Reminder::checkReminder()
 {
-    qDebug() << "count";
+    //qDebug() << "count";
     QJsonArray array = rwToDo->readToDoJSONAlarm(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(10), "");
     if(!array.empty()){
         for(int i = 0; i < array.size(); i++){
@@ -46,7 +46,7 @@ void Reminder::checkReminder()
             if(!value.isObject()) continue;
 
             QJsonObject obj = value.toObject();
-            QDateTime target = QDateTime::fromString(obj.value("reminder").toString(), "yyyy:MM:dd:hh:mm");
+            QDateTime target = QDateTime::fromString(obj.value("reminder").toString(), "yyyy-MM-dd hh:mm");
 
             if(target <= QDateTime::currentDateTime()
                 && (!obj.value("reminded").toBool())
@@ -57,19 +57,12 @@ void Reminder::checkReminder()
 
                 QString iconPath = obj.value("iconPath").toString();
                 QFileInfo iconFile(iconPath);
-
-                if (iconFile.exists() && iconFile.isFile()) {
-                    QIcon customIcon(iconPath);
-                    trayIcon->setIcon(customIcon);
-                } else {
-                    qDebug() << "Invalid icon path:" << iconPath;
-                    trayIcon->setIcon(QIcon(":/default/icons/default_icon.png")); // 기본 아이콘 대체
-                }
+                QIcon customIcon(iconPath);
 
                 trayIcon->showMessage(
                     "ToDo App Alarm",
                     obj.value("title").toString(),
-                    QSystemTrayIcon::Information,
+                    customIcon, //QSystemTrayIcon::Information,
                     10000
                 );
 
