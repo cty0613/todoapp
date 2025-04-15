@@ -3,6 +3,7 @@
 
 CmdWidget::CmdWidget(QWidget *parent)
     : QWidget(parent) , ui(new Ui::CmdWidget)
+
 {
     ui->setupUi(this);
     connect(ui->pushButton, &QPushButton::clicked,

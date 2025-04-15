@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 
-#include "subwindow.h"
 #include <QApplication>
 
 #include "model/reminder.h"
 //#include "model/todo.h"
 
 void Debug(QString str){
+    qDebug() << "-------------------------------";
     qDebug() << str;
 };
 
@@ -15,6 +15,7 @@ void arrDebug(QJsonArray array){
     QByteArray jsonBytes = doc.toJson(QJsonDocument::Indented);  // 또는 Compact
     QString jsonString = QString::fromUtf8(jsonBytes);
 
+    qDebug() << "-------------------------------";
     qDebug().noquote() << jsonString;
 };
 
@@ -23,6 +24,7 @@ void objDebug(QJsonObject obj){
     QByteArray jsonBytes = doc.toJson(QJsonDocument::Indented);  // 또는 Compact
     QString jsonString = QString::fromUtf8(jsonBytes);
 
+    qDebug() << "-------------------------------";
     qDebug().noquote() << jsonString;
 };
 
@@ -37,5 +39,3 @@ int main(int argc, char *argv[])
   
     return a.exec();
 }
-
-

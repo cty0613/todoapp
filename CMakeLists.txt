@@ -18,7 +18,7 @@ qt_add_executable(todoapp
     mainwindow.h
     mainwindow.ui
     resource.qrc
-    subwindow.h subwindow.cpp subwindow.ui
+    #subwindow.h subwindow.cpp subwindow.ui
     widgets/cmdwidget.h widgets/cmdwidget.cpp widgets/cmdwidget.ui
     widgets/todowidget.h widgets/todowidget.cpp widgets/todowidget.ui
     model/todo.h model/todo.cpp
