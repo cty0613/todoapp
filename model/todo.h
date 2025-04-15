@@ -77,9 +77,9 @@ public:
     /*File CRUD*/
 private:
     int duplicated(QJsonArray& arr, int id);
-    void overwriteToDoJSONArray(QJsonArray& arr);
     void overwriteToDoJSONArray(QJsonArray& arr, int pos, QJsonObject& obj); //-1 for append
 public:
+    void overwriteToDoJSONArray(QJsonArray& arr);
     QJsonObject toDoJSONObj();
 
     /*create(insert)*/
@@ -110,7 +110,6 @@ signals:
     //later connect
 };
 
-
-QJsonArray sortJSONByDate(QJsonArray& array);
+QJsonArray sortJSONByDate(QJsonArray& array, int mode); //0 : 오름차순, 1 내림차순
 
 #endif // TODO_H
