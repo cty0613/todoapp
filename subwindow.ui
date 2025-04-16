@@ -375,7 +375,7 @@ color: white;</string>
        <number>10</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
        <number>10</number>
@@ -384,7 +384,7 @@ color: white;</string>
        <number>10</number>
       </property>
       <item>
-       <widget class="QLabel" name="subTodoLabel">
+       <widget class="QWidget" name="subTodosLabelGroup" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -394,23 +394,115 @@ color: white;</string>
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>20</height>
+          <height>30</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>20</height>
+          <height>30</height>
          </size>
         </property>
-        <property name="styleSheet">
-         <string notr="true">font-size: 12px;
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="subTodoLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">font-size: 12px;
 font-style: normal;
 font-weight: 700;</string>
+           </property>
+           <property name="text">
+            <string>Sub Todos</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resource.qrc">
+             <normaloff>:/icon/data/AddNew.png</normaloff>:/icon/data/AddNew.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop">
+       <widget class="QWidget" name="SubTodos" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="text">
-         <string>Sub Todos</string>
+        <property name="minimumSize">
+         <size>
+          <width>420</width>
+          <height>0</height>
+         </size>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>420</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="subTodosLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="topMargin">
+          <number>8</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -440,18 +532,21 @@ font-weight: 700;</string>
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true"/>
+         <string notr="true">color: white;
+border: 1px solid #DD5174;
+border-radius: 10px;</string>
         </property>
         <property name="text">
          <string>  Cancel</string>
         </property>
         <property name="icon">
-         <iconset theme="QIcon::ThemeIcon::WindowClose"/>
+         <iconset resource="resource.qrc">
+          <normaloff>:/icon/data/Close.png</normaloff>:/icon/data/Close.png</iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>12</width>
-          <height>12</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
        </widget>
@@ -470,16 +565,22 @@ font-weight: 700;</string>
           <height>35</height>
          </size>
         </property>
+        <property name="styleSheet">
+         <string notr="true">color:white;
+border: 1px solid #9E78CF;
+border-radius: 10px;</string>
+        </property>
         <property name="text">
          <string>  Save</string>
         </property>
         <property name="icon">
-         <iconset theme="QIcon::ThemeIcon::DocumentSaveAs"/>
+         <iconset resource="resource.qrc">
+          <normaloff>:/icon/data/Save.png</normaloff>:/icon/data/Save.png</iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>12</width>
-          <height>12</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
        </widget>

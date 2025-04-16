@@ -28,7 +28,16 @@ private:
     Ui::SubWindow *ui;
     QJsonObject todoObj;
 
+    void updateSubList(bool initLoad);
+    void connectWidgetsInLayout();
+    void disconnectWidgetsInLayout();
+
 private slots:
+
+    void deleteSubTodo(const int &todoId, const int &parentId);
+    void chkSubTodo(const int &todoId);
+    void onSubTodoChanged(const int &todoId);
+
     void onSaveBtn();
     void onCancelBtn();
 };

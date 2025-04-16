@@ -201,7 +201,7 @@ void MainWindow::updateList(bool initLoad){
     int count = 0;
     for (const QJsonValue &val : todoObjArray) {
         QJsonObject obj = val.toObject();
-        if( !(obj.value("complete").toBool()) ) {
+        if( !(obj.value("complete").toBool()) && obj.value("parentId").toInt() == -1 ) {
             int _id = obj["id"].toInt();
             QString _title = obj["title"].toString();
             QString _iconPath = obj["iconPath"].toString();
@@ -256,7 +256,7 @@ void MainWindow::updateDoneList(bool initLoad){
     int count = 0;
     for (const QJsonValue &val : todoObjArray) {
         QJsonObject obj = val.toObject();
-        if(obj["complete"].toBool()){
+        if(obj["complete"].toBool() && obj.value("parentId").toInt() == -1){
             int _id = obj["id"].toInt();
             QString _title = obj["title"].toString();
             QString _iconPath = obj["iconPath"].toString();

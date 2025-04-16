@@ -8,6 +8,7 @@ Reminder::Reminder(MainWindow& wnd, QObject *parent)
     trayIcon(new QSystemTrayIcon(this)),
     timer(new QTimer(this)), wnd(wnd)
 {
+
     QIcon icon(":/icon/data/DarkClock.png");
     trayIcon->setIcon(icon);
     trayIcon->setToolTip("TODO LIST 알림");
