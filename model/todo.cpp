@@ -354,28 +354,35 @@ void ToDo::updateToDoJSON()
 
 /*JSON File Delete*/
 void ToDo::deleteToDoJSON(QJsonArray& array, int id){
-
     for (int i = array.size() - 1; i >= 0; --i) {
         QJsonValue val = array.at(i);
         if (val.isObject()) {
             QJsonObject obj = val.toObject();
             if (obj.contains("id") && obj.value("id").toInt() == id) {
-
                 //subtask 삭제
                 if(obj.contains("subTasks")){
                     QJsonArray subArr = obj.value("subTasks").toArray();
+                    //arrDebug(subArr);
                     if(!subArr.isEmpty()){
                         for(int j = 0; j < subArr.size(); j++){
-                            QJsonValue subval = subArr.at(i);
-                            if(subval.isObject()){
-                                QJsonObject subobj = subval.toObject();
-                                deleteToDoJSON(array, subobj.value("id").toInt());
+                            QJsonValue subval = subArr.at(j);
+                            if(subval.isDouble()){
+                                deleteToDoJSON(array, subval.toInt());
                             }
                         }
                     }
                 }
-
+            }
+        }
+    }
+    for (int i = array.size() - 1; i >= 0; --i) {
+        QJsonValue val = array.at(i);
+        if(val.isObject()){
+            QJsonObject obj = val.toObject();
+            if(obj["id"].toInt() == id){
                 array.removeAt(i);
+                qDebug() << "out";
+                break;
             }
         }
     }

@@ -24,14 +24,17 @@ public:
 signals:
     void deleteBtnClicked(int todoId, int parnetId);
     void chkBtnClicked(int todoId);
+    void titleChanged(QString changed, int todoId, int parentId );
 
 private:
     Ui::SubTodoWidget *ui;
     int todoId;
     int parentId;
+    bool textMod = false;
 
 private slots:
-    void onLineEdited(const QString &text);
+    void onTextModified(const QString &text);
+    void onLineEdited();
     void onDeleteBtnClicked();
     void onChkBtnClicked();
 };

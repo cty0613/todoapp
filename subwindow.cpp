@@ -40,6 +40,9 @@ SubWindow::SubWindow(QJsonObject todo, QWidget *parent)
     connect(ui->cancelBtn, &QPushButton::clicked,
             this, &SubWindow::onCancelBtn);
 
+    connect(ui->addSubTodoBtn, &QPushButton::clicked,
+            this, &SubWindow::onAddSubTodoBtn);
+
     updateSubList(true);
 
 }
@@ -50,8 +53,7 @@ SubWindow::~SubWindow()
 }
 
 void SubWindow::deleteSubTodo(const int &todoId, const int &parentId){
-    qDebug() << "sub task del clk";
-    // 부모에서 todoId 삭제
+    // 부모에서 자식들의 todoId 삭제
     QJsonObject targetTodo = ToDo().getTodoById(parentId);
     QJsonArray subTasks = targetTodo["subTasks"].toArray();
     for (int i = 0; i < subTasks.size(); ++i) {
@@ -72,7 +74,6 @@ void SubWindow::deleteSubTodo(const int &todoId, const int &parentId){
 }
 
 void SubWindow::chkSubTodo(const int &todoId){
-    qDebug() << "sub task chk clk";
     QJsonObject targetTodo = ToDo().getTodoById(todoId);
     targetTodo["complete"] = true;
     ToDo(targetTodo).updateToDoJSON();
@@ -80,8 +81,12 @@ void SubWindow::chkSubTodo(const int &todoId){
     updateSubList(false);
 }
 
-void SubWindow::onSubTodoChanged(const int &todoId){
+void SubWindow::onSubTodoChanged(QString title, const int &todoId, const int &parentId){
+    QJsonObject targetTodo = ToDo().getTodoById(todoId);
+    targetTodo["title"] = title;
+    ToDo(targetTodo).updateToDoJSON();
 
+    updateSubList(false);
 }
 
 
@@ -112,8 +117,25 @@ void SubWindow::onCancelBtn() {
     emit todoCancel();
 }
 
+void SubWindow::onAddSubTodoBtn() {
+    ToDo* newTodo = new ToDo("", " ");
+    newTodo->setParentTask(todoObj["id"].toInt());
+    newTodo->insertToDoJSON();
 
+    QJsonObject targetTodo = ToDo().getTodoById(todoObj["id"].toInt());
+    QJsonArray subTasks = targetTodo["subTasks"].toArray();
+    subTasks.append(newTodo->Id());
+    targetTodo["subTasks"] = subTasks;
+    ToDo(targetTodo).updateToDoJSON();
 
+    updateSubList(false);
+
+    // SubTodoWidget* newSubTodo = new SubTodoWidget(
+    //     ToDo().getMaxId(), // SubTodo Id
+    //     todoObj["id"].toInt(), // SubTodo's ParnetId
+    //     false); // complete = false
+    // ui->subTodosLayout->addWidget(newSubTodo);
+}
 
 void SubWindow::updateSubList(bool initLoad){
     // [1] UI를 모두 비운다음
@@ -179,6 +201,9 @@ void SubWindow::connectWidgetsInLayout(){
                 connect(todo, &SubTodoWidget::chkBtnClicked,
                         this, &SubWindow::chkSubTodo);
 
+                connect(todo, &SubTodoWidget::titleChanged,
+                        this, &SubWindow::onSubTodoChanged);
+
             }
         }
     }
@@ -200,6 +225,9 @@ void SubWindow::disconnectWidgetsInLayout(){
 
                 disconnect(todo, &SubTodoWidget::chkBtnClicked,
                            this, &SubWindow::chkSubTodo);
+
+                disconnect(todo, &SubTodoWidget::titleChanged,
+                           this, &SubWindow::onSubTodoChanged);
 
             }
         }
