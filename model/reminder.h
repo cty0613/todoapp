@@ -15,8 +15,8 @@ class Reminder : public QObject
 
 public:
     explicit Reminder(QObject *parent = nullptr);
-    void setReminder(ToDo* rwToDo);
-    void updateArray();
+    //void setReminder(ToDo* rwToDo);
+    //void updateArray();
 
 private slots:
     void checkReminder();

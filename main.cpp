@@ -33,9 +33,12 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QFont appFont("NanumGothic", 10);
     a.setFont(appFont);
+
     MainWindow w;
-    // w.setAttribute(Qt::WA_QuitOnClose, false);
+    w.setAttribute(Qt::WA_QuitOnClose, false);
     w.show();
-  
+
+    Reminder rmd;
+
     return a.exec();
 }

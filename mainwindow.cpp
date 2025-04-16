@@ -64,6 +64,7 @@ void MainWindow::chkTodo(const int &todoId){
 void MainWindow::editTodo(const int &todoId){
     QJsonObject targetTodo = ToDo().getTodoById(todoId);
     SubWindow* subw = new SubWindow(targetTodo);
+    subw->setAttribute(Qt::WA_QuitOnClose, false); //추가 안하면 subWindow 닫히면서 프로그램 전체 종료!!
     subw->show();
 
     // todoSave 시그널이 발생했을 때 subw 닫고 삭제
@@ -98,6 +99,7 @@ void MainWindow::chkTodoDone(const int &todoId){
 void MainWindow::editTodoDone(const int &todoId){
     QJsonObject targetTodo = ToDo().getTodoById(todoId);
     SubWindow* subw = new SubWindow(targetTodo);
+    subw->setAttribute(Qt::WA_QuitOnClose, false);
     subw->show();
 
     // todoSave 시그널이 발생했을 때 subw 닫고 삭제
@@ -134,6 +136,7 @@ void MainWindow::updateList(bool initLoad){
 
     QJsonArray todoObjArray = ToDo().readToDoJSON();
      // Todo가 있는 경우 해당하는 위젯 추가
+    int count = 0;
     for (const QJsonValue &val : todoObjArray) {
         QJsonObject obj = val.toObject();
         if( !(obj.value("complete").toBool()) ) {
@@ -142,6 +145,9 @@ void MainWindow::updateList(bool initLoad){
             QString _iconPath = obj["iconPath"].toString();
             TodoWidget* newTodoWidget = new TodoWidget(_id, false, _title, _iconPath, this);
             ui->TodoListGroupLayout->addWidget(newTodoWidget);
+
+            count++;
+            if(count > 4) break;
         }
     }
 
@@ -158,8 +164,6 @@ void MainWindow::updateList(bool initLoad){
     // TodoWidget 생성
 
     connectWidgetsInLayout();
-
-
 }
 
 void MainWindow::updateDoneList(bool initLoad){
@@ -187,6 +191,7 @@ void MainWindow::updateDoneList(bool initLoad){
     // 각 오브젝트를 뽑고나서
     // TodoWidget 생성
 
+    int count = 0;
     for (const QJsonValue &val : todoObjArray) {
         QJsonObject obj = val.toObject();
         if(obj["complete"].toBool()){
@@ -195,6 +200,9 @@ void MainWindow::updateDoneList(bool initLoad){
             QString _iconPath = obj["iconPath"].toString();
             TodoWidget* newTodoWidget = new TodoWidget(_id, true, _title, _iconPath, this);
             ui->doneListGroupLayout->addWidget(newTodoWidget);
+
+            count++;
+            if(count > 4) break;
         }
     }
 
