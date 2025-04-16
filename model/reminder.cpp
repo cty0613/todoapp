@@ -3,18 +3,18 @@
 #include <QStyle>
 #include <QDebug>
 
-Reminder::Reminder(QObject *parent)
+Reminder::Reminder(MainWindow& wnd, QObject *parent)
     : QObject(parent), rwToDo(new ToDo()),
     trayIcon(new QSystemTrayIcon(this)),
-    timer(new QTimer(this))
+    timer(new QTimer(this)), wnd(wnd)
 {
-    QIcon icon = QApplication::style()->standardIcon(QStyle::SP_ComputerIcon);
+    QIcon icon(":/icon/data/DarkClock.png");
     trayIcon->setIcon(icon);
     trayIcon->setToolTip("TODO LIST 알림");
 
     // 트레이 메뉴 구성
     trayMenu = new QMenu();
-    showAction = new QAction("정보", this);
+    showAction = new QAction("열기", this);
     quitAction = new QAction("종료", this);
     trayMenu->addAction(showAction);
     trayMenu->addSeparator();
@@ -38,8 +38,10 @@ Reminder::Reminder(QObject *parent)
 
 void Reminder::checkReminder()
 {
-    //qDebug() << "count";
-    QJsonArray array = rwToDo->readToDoJSONAlarm(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(10), "");
+    QJsonArray array = rwToDo->readToDoJSONAlarm(QDateTime::currentDateTime().addSecs(-1800), QDateTime::currentDateTime().addDays(1), "");
+
+    //qDebug() << (array.size());
+
     if(!array.empty()){
         for(int i = 0; i < array.size(); i++){
             QJsonValue value = array.at(i);
@@ -52,8 +54,8 @@ void Reminder::checkReminder()
                 && (!obj.value("reminded").toBool())
                 && (!obj.value("complete").toBool())){
 
-                qDebug() << target.toString();
-                qDebug() << QDateTime::currentDateTime().toString();
+                //qDebug() << target.toString();
+                //qDebug() << QDateTime::currentDateTime().toString();
 
                 QString iconPath = obj.value("iconPath").toString();
                 QFileInfo iconFile(iconPath);
@@ -64,7 +66,7 @@ void Reminder::checkReminder()
                     obj.value("title").toString(),
                     customIcon, //QSystemTrayIcon::Information,
                     10000
-                );
+                    );
 
                 qDebug() << "check";
                 ToDo toUpdate(obj);
@@ -88,7 +90,7 @@ void Reminder::checkReminder()
 
 void Reminder::onShowReminderWindow()
 {
-    trayIcon->showMessage("Reminder 상태", "트레이에서 실행 중입니다.");
+    wnd.show();
 }
 
 void Reminder::onQuitApp()

@@ -2,6 +2,7 @@
 #define REMINDER_H
 
 #include "todo.h"
+#include "../mainwindow.h"
 
 #include <QObject>
 #include <QSystemTrayIcon>
@@ -14,7 +15,7 @@ class Reminder : public QObject
     Q_OBJECT
 
 public:
-    explicit Reminder(QObject *parent = nullptr);
+    explicit Reminder(MainWindow& wnd, QObject *parent = nullptr);
     //void setReminder(ToDo* rwToDo);
     //void updateArray();
 
@@ -28,6 +29,7 @@ private:
     QTimer *timer;
 
     ToDo* rwToDo;
+    MainWindow& wnd;
 
     QMenu *trayMenu;
     QAction *showAction;
