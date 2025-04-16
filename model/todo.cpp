@@ -433,6 +433,17 @@ void ToDo::deleteToDoJSON(QDateTime to, QDateTime from, QString title = "")
     overwriteToDoJSONArray(array);
 }
 
+void ToDo::deleteToDoJSONSubTask(int child_id, int parent_id)
+{
+    // QVector<int>::iterator it =
+    //     std::find(subTasks.begin(), subTasks.end(), id);
+    // if(it != subTasks.end()){
+    //     subTasks.erase(it);
+    //     deleteToDoJSON(child_id);
+    // }
+    
+}
+
 void ToDo::addSubTasksToToDoJSON(ToDo& todo){
     todo.setParentTask(this->Id());
     this->subTasks.append(todo.Id());

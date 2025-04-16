@@ -105,7 +105,7 @@ public:
     void deleteToDoJSON(QString title);
     void deleteToDoJSON(int id);
     void deleteToDoJSON(QDateTime to, QDateTime from, QString title);
-
+    void deleteToDoJSONSubTask(int child_id, int parent_id);
     // sort
 
 

@@ -8,7 +8,7 @@ Reminder::Reminder(QObject *parent)
     trayIcon(new QSystemTrayIcon(this)),
     timer(new QTimer(this))
 {
-    QIcon icon = QApplication::style()->standardIcon(QStyle::SP_ComputerIcon);
+    QIcon icon(":/icon/data/Clock.png");
     trayIcon->setIcon(icon);
     trayIcon->setToolTip("TODO LIST 알림");
 

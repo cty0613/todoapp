@@ -18,5 +18,8 @@
         <file>data/Reversed Numerical Sorting.png</file>
         <file>data/Speech Bubble.png</file>
         <file>data/User Male.png</file>
+        <file>data/AddNew.png</file>
+        <file>data/Close.png</file>
+        <file>data/Save.png</file>
     </qresource>
 </RCC>
