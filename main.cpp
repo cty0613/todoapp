@@ -29,7 +29,7 @@ void objDebug(QJsonObject obj){
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QFont appFont("NanumGothic", 10);
+    QFont appFont("맑은 고딕", 10);
     a.setFont(appFont);
     QIcon icon(":/icon/data/DarkClock.png");
     a.setWindowIcon(icon);

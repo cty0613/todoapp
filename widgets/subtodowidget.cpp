@@ -31,7 +31,10 @@ SubTodoWidget::SubTodoWidget(int id,
             this, &SubTodoWidget::onChkBtnClicked);
 
     connect(ui->lineEdit, &QLineEdit::textChanged,
-            this,&SubTodoWidget::onLineEdited);
+            this, &SubTodoWidget::onTextModified);
+
+    connect(ui->lineEdit, &QLineEdit::editingFinished,
+            this, &SubTodoWidget::onLineEdited);
 
 }
 
@@ -40,7 +43,12 @@ SubTodoWidget::~SubTodoWidget()
     delete ui;
 }
 
-void SubTodoWidget::onLineEdited(const QString &text){
+void SubTodoWidget::onTextModified(const QString &text){
+    textMod = true;
+}
+
+void SubTodoWidget::onLineEdited(){
+    if(textMod) { emit titleChanged(ui->lineEdit->text(), todoId, parentId); }
 
 }
 

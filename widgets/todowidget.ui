@@ -128,7 +128,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset theme="user-trash" resource="../resource.qrc">
+      <iconset resource="../resource.qrc">
        <normaloff>:/icon/data/Delete.png</normaloff>:/icon/data/Delete.png</iconset>
      </property>
      <property name="iconSize">

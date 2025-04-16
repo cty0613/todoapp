@@ -16,12 +16,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // mainwindow.cpp 또는 setupUi 이후에 추가
-    QScrollArea *scrollArea = new QScrollArea(this);             // 스크롤 영역 생성
-    scrollArea->setWidget(ui->TodoListGroup);                    // 기존 TodoListGroup을 감쌈
-    scrollArea->setWidgetResizable(true);                        // 내부 위젯 크기에 맞게 조절
-    scrollArea->setFixedHeight(300);                             // 원하는 높이로 고정 (예: 300픽셀)
+    QScrollArea *scrollArea = new QScrollArea(this); // 스크롤 영역 생성
+    scrollArea->setWidget(ui->TodoListGroup);        // 기존 TodoListGroup을 감쌈
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFixedHeight(300);
+    scrollArea->setFrameShape(QFrame::NoFrame);
 
-    ui->verticalLayout_4->insertWidget(2, scrollArea);           // 기존 위치(두 번째 item)에 삽입
+    ui->verticalLayout_4->insertWidget(2, scrollArea);  // 기존 위치(두 번째 item)에 삽입
     ui->TodoListGroupLayout->setAlignment(Qt::AlignTop);
 
     ui->comboBox->addItem(QIcon(":/icon/data/Reversed Numerical Sorting.png"), "Date Asc");
@@ -83,7 +84,7 @@ void MainWindow::sortBy(const QString &text) {
         // Todo가 있는 경우 해당하는 위젯 추가
     for (const QJsonValue &val : sortedArray) {
         QJsonObject obj = val.toObject();
-        if( !(obj.value("complete").toBool()) ) {
+        if( !(obj.value("complete").toBool()) && (obj.value("parentTask").toInt() == -1) ) {
             int _id = obj["id"].toInt();
             QString _title = obj["title"].toString();
             QString _iconPath = obj["iconPath"].toString();
@@ -201,7 +202,7 @@ void MainWindow::updateList(bool initLoad){
     int count = 0;
     for (const QJsonValue &val : todoObjArray) {
         QJsonObject obj = val.toObject();
-        if( !(obj.value("complete").toBool()) && obj.value("parentId").toInt() == -1 ) {
+        if( !(obj.value("complete").toBool()) && (obj.value("parentTask").toInt() == -1) ) {
             int _id = obj["id"].toInt();
             QString _title = obj["title"].toString();
             QString _iconPath = obj["iconPath"].toString();
@@ -256,7 +257,7 @@ void MainWindow::updateDoneList(bool initLoad){
     int count = 0;
     for (const QJsonValue &val : todoObjArray) {
         QJsonObject obj = val.toObject();
-        if(obj["complete"].toBool() && obj.value("parentId").toInt() == -1){
+        if(obj["complete"].toBool() && (obj.value("parentTask").toInt() == -1) ){
             int _id = obj["id"].toInt();
             QString _title = obj["title"].toString();
             QString _iconPath = obj["iconPath"].toString();

@@ -36,10 +36,11 @@ private slots:
 
     void deleteSubTodo(const int &todoId, const int &parentId);
     void chkSubTodo(const int &todoId);
-    void onSubTodoChanged(const int &todoId);
+    void onSubTodoChanged(QString title, const int &todoId, const int &parentId);
 
     void onSaveBtn();
     void onCancelBtn();
+    void onAddSubTodoBtn();
 };
 
 #endif // SUBWINDOW_H

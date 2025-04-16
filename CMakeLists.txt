@@ -23,7 +23,6 @@ qt_add_executable(todoapp
     widgets/todowidget.h widgets/todowidget.cpp widgets/todowidget.ui
     model/todo.h model/todo.cpp
     model/reminder.h model/reminder.cpp
-    data/todo.json
     widgets/voidwidget.h widgets/voidwidget.cpp widgets/voidwidget.ui
     widgets/subtodowidget.h widgets/subtodowidget.cpp widgets/subtodowidget.ui
 )
