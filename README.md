@@ -1,7 +1,7 @@
-## 컴파일된 실행파일 위치
+## 컴파일된 실행파일 패키지
 
-`/deploy/todoapp.exe`
+> `/deploy.zip`
 
 ## 프로젝트
 
-`/CMakeList.txt`
+> `/CMakeList.txt`
