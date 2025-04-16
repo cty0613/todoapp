@@ -8,14 +8,14 @@ void Debug(QString str){
     qDebug() << str;
 };
 
-void arrDebug(QJsonArray array){
-    QJsonDocument doc(array);
-    QByteArray jsonBytes = doc.toJson(QJsonDocument::Indented);  // 또는 Compact
-    QString jsonString = QString::fromUtf8(jsonBytes);
+// void arrDebug(QJsonArray array){
+//     QJsonDocument doc(array);
+//     QByteArray jsonBytes = doc.toJson(QJsonDocument::Indented);  // 또는 Compact
+//     QString jsonString = QString::fromUtf8(jsonBytes);
 
-    qDebug() << "-------------------------------";
-    qDebug().noquote() << jsonString;
-};
+//     qDebug() << "-------------------------------";
+//     qDebug().noquote() << jsonString;
+// };
 
 void objDebug(QJsonObject obj){
     QJsonDocument doc(obj);

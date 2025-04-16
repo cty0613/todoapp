@@ -352,6 +352,15 @@ void ToDo::updateToDoJSON()
     overwriteToDoJSONArray(array, index, newObj);
 }
 
+void arrDebug(QJsonArray array){
+    QJsonDocument doc(array);
+    QByteArray jsonBytes = doc.toJson(QJsonDocument::Indented);  // 또는 Compact
+    QString jsonString = QString::fromUtf8(jsonBytes);
+
+    qDebug() << "-------------------------------";
+    qDebug().noquote() << jsonString;
+};
+
 /*JSON File Delete*/
 void ToDo::deleteToDoJSON(QJsonArray& array, int id){
 
@@ -364,18 +373,28 @@ void ToDo::deleteToDoJSON(QJsonArray& array, int id){
                 //subtask 삭제
                 if(obj.contains("subTasks")){
                     QJsonArray subArr = obj.value("subTasks").toArray();
+                    //arrDebug(subArr);
                     if(!subArr.isEmpty()){
                         for(int j = 0; j < subArr.size(); j++){
-                            QJsonValue subval = subArr.at(i);
-                            if(subval.isObject()){
-                                QJsonObject subobj = subval.toObject();
-                                deleteToDoJSON(array, subobj.value("id").toInt());
+                            QJsonValue subval = subArr.at(j);
+                            if(subval.isDouble()){
+                                deleteToDoJSON(array, subval.toInt());
                             }
                         }
                     }
                 }
+            }
+        }
+    }
 
+    for (int i = array.size() - 1; i >= 0; --i) {
+        QJsonValue val = array.at(i);
+        if(val.isObject()){
+            QJsonObject obj = val.toObject();
+            if(obj["id"].toInt() == id){
                 array.removeAt(i);
+                qDebug() << "out";
+                break;
             }
         }
     }
