@@ -95,8 +95,10 @@ void SubWindow::onSaveBtn(){
     // 날짜가 설정된 경우만 저장
     if (reminderValue.isValid() && reminderValue != QDateTime()) {
         todoObj["reminder"] = reminderValue.toString("yyyy-MM-dd HH:mm");
+        todoObj["reminded"] = false;
     } else {
         todoObj["reminder"] = "";  // 기본값이라면 공백으로 저장
+        todoObj["reminded"] = false;
     }
     // details
     todoObj["detail"] = ui->detailTextEdit->toPlainText();

@@ -1,5 +1,3 @@
-#include "mainwindow.h"
-
 #include <QApplication>
 
 #include "model/reminder.h"
@@ -33,12 +31,14 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QFont appFont("NanumGothic", 10);
     a.setFont(appFont);
+    QIcon icon(":/icon/data/DarkClock.png");
+    a.setWindowIcon(icon);
 
     MainWindow w;
     w.setAttribute(Qt::WA_QuitOnClose, false);
     w.show();
 
-    Reminder rmd;
+    Reminder rmd(w);
 
     return a.exec();
 }
