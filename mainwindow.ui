@@ -18,12 +18,12 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>530</width>
-    <height>800</height>
+    <width>480</width>
+    <height>630</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Widget</string>
+   <string>ToDoApp</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background: #1D1825;</string>
